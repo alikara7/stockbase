@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1d27" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <title>StockBase</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -163,14 +168,42 @@ tbody tr:hover td{background:rgba(22,163,74,.03)}
 @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* MOBILE NAV BAR */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1.5px solid var(--border);z-index:200;padding:0 0 env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.15)}
+.mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px;cursor:pointer;color:var(--muted);gap:3px;transition:color .15s;-webkit-tap-highlight-color:transparent;border:none;background:none;font-family:'Inter',sans-serif}
+.mnav-item.active{color:var(--green)}
+.mnav-icon{font-size:22px;line-height:1}
+.mnav-label{font-size:10px;font-weight:600;letter-spacing:.02em}
 /* RESPONSIVE */
 @media(max-width:1100px){.stats-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){
-  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
-  .main{padding:16px 14px} .topbar{padding:0 14px}
-  .logo{display:none} .uname{display:none} .search-box{width:130px}
-  .table-wrap{display:none} .card-list{display:block}
-  .tab{font-size:11px;padding:8px 5px}
+  .dw-banner{padding:14px 16px;margin-bottom:14px;border-radius:12px}
+  .dw-title{font-size:16px}
+  .dw-icon{font-size:22px}
+  html,body{height:100%;overflow:hidden}
+  #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  .topbar{flex-shrink:0;height:54px;padding:0 12px;border-bottom:1.5px solid var(--border)}
+  .main{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 90px;-webkit-overflow-scrolling:touch}
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .stat-card{padding:14px 14px 12px}
+  .stat-val{font-size:26px}
+  .logo{font-size:16px}
+  .uname{display:none}
+  .sync-pill span{display:none}
+  .sync-pill{padding:5px 8px}
+  .icon-btn:not(.theme-btn){display:none}
+  .rbadge{display:none}
+  .search-box{width:100%;margin-bottom:8px}
+  .sec-right{flex-wrap:wrap;width:100%}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .table-wrap{display:none}
+  .card-list{display:block}
+  .tabs{display:none}
+  .mobile-nav{display:flex}
+  #toast-box{top:auto;bottom:80px;right:8px;left:8px}
+  .toast{min-width:unset;width:100%}
+  .modal{border-radius:20px 20px 0 0;max-width:100%;width:100%;position:fixed;bottom:0;left:0;right:0;margin:0;max-height:85vh}
+  .overlay{align-items:flex-end;padding:0}
 }
 /* DARK THEME */
 html[data-theme="dark"] body{background:#0f1117}
@@ -297,7 +330,40 @@ html[data-theme="dark"] .tabs{box-shadow:0 4px 16px rgba(0,0,0,.5)}
     </div>
   </div>
 
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-nav">
+    <button class="mnav-item active" id="mnav-products" onclick="switchTab('products',document.getElementById('tab-btn-products'))">
+      <span class="mnav-icon">🗃️</span>
+      <span class="mnav-label">Products</span>
+    </button>
+    <button class="mnav-item" id="mnav-materials" onclick="switchTab('materials',document.getElementById('tab-btn-materials'))">
+      <span class="mnav-icon">🌿</span>
+      <span class="mnav-label">Materials</span>
+    </button>
+    <button class="mnav-item" id="mnav-othermaterials" onclick="switchTab('othermaterials',document.getElementById('tab-btn-othermaterials'))">
+      <span class="mnav-icon">📦</span>
+      <span class="mnav-label">Other</span>
+    </button>
+    <button class="mnav-item" id="mnav-history" onclick="switchTab('history',document.getElementById('tab-btn-history'))">
+      <span class="mnav-icon">📋</span>
+      <span class="mnav-label">History</span>
+    </button>
+    <button class="mnav-item" onclick="logout()">
+      <span class="mnav-icon">🚪</span>
+      <span class="mnav-label">Log out</span>
+    </button>
+  </nav>
+
   <div class="main">
+
+    <!-- Welcome Banner -->
+    <div class="dw-banner">
+      <div>
+        <div class="dw-title">Welcome back, <span id="dw-name">—</span> 👋</div>
+        <div class="dw-sub">Here's an overview of your inventory. Click any card to manage it.</div>
+      </div>
+      <div class="dw-icon">🏭</div>
+    </div>
 
     <!-- Stats (click to navigate to that tab) -->
     <div class="stats-row">
@@ -496,6 +562,7 @@ function doLogin() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('uname').textContent = name;
+  document.getElementById('dw-name').textContent = name;
   document.getElementById('uavatar').textContent = name.charAt(0).toUpperCase();
   const rb = document.getElementById('rbadge');
   rb.textContent = role.toUpperCase();
@@ -682,6 +749,13 @@ function switchTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
+  // sync mobile bottom nav
+  document.querySelectorAll('.mnav-item').forEach(m => m.classList.remove('active'));
+  const mnav = document.getElementById('mnav-' + name);
+  if (mnav) mnav.classList.add('active');
+  // on mobile scroll content to top
+  const main = document.querySelector('.main');
+  if (main && window.innerWidth <= 700) main.scrollTo({top:0, behavior:'smooth'});
 }
 
 function filterTable(type, val) { searchTerms[type] = val.toLowerCase(); renderTable(type); }
