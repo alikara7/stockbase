@@ -26,7 +26,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;transition:background .2s,color .2s}
 /* LOGIN */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+#login-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .login-box{width:100%;max-width:420px;background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:44px 36px;box-shadow:var(--shadow-lg)}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .mark{width:40px;height:40px;background:linear-gradient(135deg,var(--green),#15803d);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
@@ -182,11 +182,8 @@ tbody tr:hover td{background:rgba(22,163,74,.03)}
   .dw-banner{padding:14px 16px;margin-bottom:14px;border-radius:12px}
   .dw-title{font-size:16px}
   .dw-icon{font-size:22px}
-  html{overflow-x:hidden}
-  body{overflow-x:hidden;min-height:100vh}
-  #app{display:block}
-  .topbar{position:sticky;top:0;z-index:100;height:54px;padding:0 12px;border-bottom:1.5px solid var(--border)}
-  .main{padding:12px 12px 100px;overflow-x:hidden}
+  .topbar{height:54px;padding:0 12px}
+  .main{padding:12px 12px 100px}
   .stats-row{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
   .stat-card{padding:14px 14px 12px}
   .stat-val{font-size:26px}
@@ -202,7 +199,7 @@ tbody tr:hover td{background:rgba(22,163,74,.03)}
   .table-wrap{display:none}
   .card-list{display:block}
   .tabs{display:none}
-  .mobile-nav{display:flex}
+  #app.visible .mobile-nav{display:flex}
   #toast-box{top:auto;bottom:80px;right:8px;left:8px}
   .toast{min-width:unset;width:100%}
   .modal{border-radius:20px 20px 0 0;max-width:100%;width:100%;position:fixed;bottom:0;left:0;right:0;margin:0;max-height:85vh}
