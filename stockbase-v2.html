@@ -921,6 +921,27 @@ function lpSwitchTab(type, el) {
 }
 
 function lpSearch(val) { lpSearchTerm = val.toLowerCase(); renderLPContent(); }
+
+function updateSearchPlaceholder() {
+  const el = document.getElementById('lp-search');
+  if (!el) return;
+  if (lpCurrentTab === 'products') {
+    if (!lpMarket) el.placeholder = 'Piyasa ara…';
+    else if (!lpCompany && lpMarket !== 'fabrika') el.placeholder = 'Firma ara…';
+    else el.placeholder = 'Ürün ara…';
+  } else if (lpCurrentTab === 'materials') {
+    el.placeholder = 'Ürün veya tedarikçi ara…';
+  } else if (lpCurrentTab === 'othermaterials') {
+    if (!lpSection) el.placeholder = 'Bölüm ara…';
+    else el.placeholder = 'Ürün ara…';
+  } else if (lpCurrentTab === 'lowstock') {
+    el.placeholder = 'Ürün ara…';
+  } else if (lpCurrentTab === 'history') {
+    el.placeholder = 'Geçmiş ara…';
+  } else {
+    el.placeholder = 'Search…';
+  }
+}
 function lpAddItem() { if (lpCurrentTab !== 'lowstock' && lpCurrentTab !== 'history') openItemModal(lpCurrentTab, null); }
 
 function renderLPContent() {
@@ -928,6 +949,7 @@ function renderLPContent() {
   if (!el) return;
   window._lpDrillOptions = [];
   const isManager = role === 'manager';
+  updateSearchPlaceholder();
   const actBtns = (t, id) => `<button class="btn-s b-upd" onclick="openUpdModal('${t}','${id}')">Update</button><button class="btn-s b-edit" onclick="openItemModal('${t}','${id}')">Edit</button><button class="btn-s b-del" onclick="confirmDelete('${t}','${id}')">Delete</button>`;
 
   function makeDrillTile(icon, bg, label, sub, opts) {
@@ -995,15 +1017,17 @@ function renderLPContent() {
       const backIdx = window._lpDrillOptions.length;
       window._lpDrillOptions.push({market:null,company:null});
       const filtered = products.filter(p=>p.market===lpMarket);
-      const companies = [...new Set(filtered.map(p=>p.company||'').filter(Boolean))].sort();
+      let companies = [...new Set(filtered.map(p=>p.company||'').filter(Boolean))].sort();
       const noComp = filtered.filter(p=>!p.company);
+      if (lpSearchTerm) companies = companies.filter(c => c.toLowerCase().includes(lpSearchTerm));
+      const showNoComp = noComp.length && (!lpSearchTerm || 'firma yok'.includes(lpSearchTerm));
       let html = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Piyasalar</button></div>`;
-      if (!companies.length && !noComp.length) {
-        html += `<div class="empty">${mktLabel} henüz ürün yok</div>`; el.innerHTML=html; return;
+      if (!companies.length && !showNoComp) {
+        html += `<div class="empty">${lpSearchTerm ? 'Firma bulunamadı' : mktLabel+' henüz ürün yok'}</div>`; el.innerHTML=html; return;
       }
       html += `<div class="dash-nav-grid">`;
       companies.forEach(c => html += makeDrillTile('🏢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} ürün`,{market:lpMarket,company:c}));
-      if (noComp.length) html += makeDrillTile('❓','var(--surface2)','Firma Yok',`${noComp.length} ürün`,{market:lpMarket,company:'__none__'});
+      if (showNoComp) html += makeDrillTile('❓','var(--surface2)','Firma Yok',`${noComp.length} ürün`,{market:lpMarket,company:'__none__'});
       html += '</div>';
       el.innerHTML = html; return;
     }
