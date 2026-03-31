@@ -586,7 +586,6 @@ let role = 'manager', userName = '';
 let products = [], materials = [], othermaterials = [], history = [];
 let editType = null, editId = null, updTarget = null;
 let editItemMarket = null, editItemSection = null, editItemCondition = null;
-let searchTerms = { products:'', materials:'', othermaterials:'', history:'' };
 
 // ─── THEME ───────────────────────────────────────────────
 const DARK = ':root{--bg:#000000;--surface:#1c1c1e;--surface2:#2c2c2e;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.14);--green:#30d158;--green-l:rgba(48,209,88,.18);--green-m:rgba(48,209,88,.4);--blue:#0a84ff;--blue-l:rgba(10,132,255,.18);--blue-m:rgba(10,132,255,.4);--brown:#d97706;--brown-l:rgba(217,119,6,.18);--teal:#14b8a6;--teal-l:rgba(20,184,166,.18);--danger:#ff453a;--danger-l:rgba(255,69,58,.18);--warn:#ffd60a;--warn-l:rgba(255,214,10,.18);--purple:#bf5af2;--purple-l:rgba(191,90,242,.18);--text:#f2f2f7;--text2:#ebebf599;--muted:rgba(235,235,245,.4);--blur-nav:rgba(28,28,30,.92);--shadow:0 1px 3px rgba(0,0,0,.6);--shadow-md:0 4px 16px rgba(0,0,0,.7);--shadow-lg:0 12px 36px rgba(0,0,0,.8)}';
@@ -740,81 +739,6 @@ function getStatus(item) {
   if (item.qty <= item.min) return { cls:'low', pill:'pill-low', label:'⚠ Low' };
   if (item.qty <= item.min * 1.5) return { cls:'warn', pill:'pill-warn', label:'~ Warning' };
   return { cls:'ok', pill:'pill-ok', label:'✓ OK' };
-}
-
-function renderTable(type) {
-  const items = getList(type);
-  const term  = searchTerms[type] || '';
-  const filtered = term ? items.filter(i =>
-    i.name.toLowerCase().includes(term) || (i.category||'').toLowerCase().includes(term)
-  ) : items;
-
-  const tbody = document.getElementById('tb-' + type);
-  const cards = document.getElementById('cl-' + type);
-  const isManager = role === 'manager';
-  const actBtns = (t, id) =>
-    `<button class="btn-s b-upd" onclick="openUpdModal('${t}','${id}')">Update</button>
-     <button class="btn-s b-edit" onclick="openItemModal('${t}','${id}')">Edit</button>
-     <button class="btn-s b-del" onclick="confirmDelete('${t}','${id}')">Delete</button>`;
-
-  if (!filtered.length) {
-    const msg = `<tr><td colspan="7"><div class="empty">${term ? 'No results for "'+esc(term)+'"' : 'No items yet'}</div></td></tr>`;
-    tbody.innerHTML = msg;
-    if (cards) cards.innerHTML = `<div class="empty">${term ? 'No results' : 'No items yet'}</div>`;
-    return;
-  }
-
-  tbody.innerHTML = filtered.map(item => {
-    const s = getStatus(item);
-    return `<tr>
-      <td style="font-weight:700">${esc(item.name)}</td>
-      <td style="color:var(--text2)">${esc(item.category||'—')}</td>
-      <td class="col-${s.cls}" style="font-size:15px">${item.qty}</td>
-      <td style="color:var(--text2)">${esc(item.unit||'—')}</td>
-      <td style="color:var(--muted)">${item.min}</td>
-      <td><span class="pill ${s.pill}">${s.label}</span></td>
-      <td><div class="acts">${actBtns(type, item.id)}</div></td>
-    </tr>`;
-  }).join('');
-
-  if (cards) {
-    cards.innerHTML = filtered.map(item => {
-      const s = getStatus(item);
-      return `<div class="item-card">
-        <div class="ic-top">
-          <div><div class="ic-name">${esc(item.name)}</div><div class="ic-cat">${esc(item.category||'—')}</div></div>
-          <span class="pill ${s.pill}">${s.label}</span>
-        </div>
-        <div class="ic-mid">
-          <div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${item.qty}</span></div>
-          <div class="ic-field"><label>UNIT</label><span>${esc(item.unit||'—')}</span></div>
-          <div class="ic-field"><label>MIN</label><span>${item.min}</span></div>
-        </div>
-        <div class="ic-actions">${actBtns(type, item.id)}</div>
-      </div>`;
-    }).join('');
-  }
-}
-
-function renderHistory() {
-  const el   = document.getElementById('hist-list');
-  const term = searchTerms.history || '';
-  const filtered = term
-    ? history.filter(h => (h.text||'').toLowerCase().includes(term) || (h.username||'').toLowerCase().includes(term))
-    : history;
-  if (!filtered.length) {
-    el.innerHTML = `<div class="empty">${term ? 'No results' : 'No history yet'}</div>`;
-    return;
-  }
-  el.innerHTML = filtered.slice(0, 100).map(h =>
-    `<div class="h-row">
-      <div class="h-dot ${h.action}"></div>
-      <div>
-        <div class="h-text">${esc(h.text)}</div>
-        <div class="h-time">${h.time} — by ${esc(h.username)}</div>
-      </div>
-    </div>`
-  ).join('');
 }
 
 function renderStats() {
