@@ -394,11 +394,7 @@ html[data-theme="dark"] .list-panel{background:#000}
       <div class="logo">Stock<span>Base</span></div>
     </div>
     <div class="sub">// live storage · synced across all devices</div>
-    <div class="role-row">
-      <button class="role-btn active" onclick="selRole('manager',this)">Manager</button>
-      <button class="role-btn" onclick="selRole('employee',this)">Employee</button>
-    </div>
-    <div class="f-row"><label>Your Name</label><input type="text" id="l-name" placeholder="e.g. Ahmet"/></div>
+    <div class="f-row"><label>Username</label><input type="text" id="l-name" placeholder="e.g. Ismail" autocomplete="username"/></div>
     <div class="f-row"><label>Pin Code</label><input type="password" id="l-pin" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
     <button class="btn-primary" onclick="doLogin()">Enter System</button>
     <div class="login-error" id="l-err"></div>
@@ -575,7 +571,12 @@ html[data-theme="dark"] .list-panel{background:#000}
 const SUPABASE_URL = 'https://rvkctesflmkyxfrqeuyd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_SA__NpN_8UrWyLk3LO5GIA_C9bCUVGW';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const MANAGER_PIN = '1357', EMPLOYEE_PIN = '0000';
+const USERS = {
+  'ismail': { pin: '7392', role: 'manager' },
+  'ali':    { pin: '4851', role: 'manager' },
+  'salih':  { pin: '2647', role: 'employee' },
+  'kadir':  { pin: '9035', role: 'employee' },
+};
 
 let role = 'manager', userName = '';
 let products = [], materials = [], othermaterials = [], history = [];
@@ -643,13 +644,16 @@ function selRole(r, btn) {
 }
 
 function doLogin() {
-  const name = document.getElementById('l-name').value.trim();
-  const pin  = document.getElementById('l-pin').value.trim();
-  const err  = document.getElementById('l-err');
-  if (!name) { err.textContent = 'Please enter your name'; return; }
-  if (role === 'manager'  && pin !== MANAGER_PIN)  { err.textContent = 'Incorrect pin'; return; }
-  if (role === 'employee' && pin !== EMPLOYEE_PIN) { err.textContent = 'Incorrect pin'; return; }
+  const nameRaw = document.getElementById('l-name').value.trim();
+  const pin     = document.getElementById('l-pin').value.trim();
+  const err     = document.getElementById('l-err');
+  if (!nameRaw) { err.textContent = 'Please enter your username'; return; }
+  const user = USERS[nameRaw.toLowerCase()];
+  if (!user) { err.textContent = 'Unknown username'; return; }
+  if (pin !== user.pin) { err.textContent = 'Incorrect pin'; return; }
   err.textContent = '';
+  role = user.role;
+  const name = nameRaw.charAt(0).toUpperCase() + nameRaw.slice(1).toLowerCase();
   userName = name;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
