@@ -335,9 +335,10 @@ html[data-theme="dark"] .list-panel{background:#000}
     <!-- Products: market + company -->
     <div class="f-row" id="f-market">
       <label>Piyasa / Market</label>
-      <div class="role-row" style="margin:0">
+      <div class="role-row" style="margin:0;grid-template-columns:1fr 1fr 1fr">
         <button type="button" class="role-btn" id="mkt-yurtici" onclick="selItemMarket('yurtici',this)">Yurt İçi</button>
         <button type="button" class="role-btn" id="mkt-yurtdisi" onclick="selItemMarket('yurtdisi',this)">Yurt Dışı</button>
+        <button type="button" class="role-btn" id="mkt-fabrika" onclick="selItemMarket('fabrika',this)">Fabrika</button>
       </div>
     </div>
     <div class="f-row" id="f-company"><label>Firma / Company</label><input type="text" id="i-company" placeholder="Firma adı…"/></div>
@@ -845,8 +846,12 @@ const LP_TITLES = {
 function updateLPTitle() {
   let title = LP_TITLES[lpCurrentTab] || 'Items';
   if (lpCurrentTab === 'products' && lpMarket) {
-    const m = lpMarket === 'yurtici' ? 'Yurt İçi' : 'Yurt Dışı';
-    title = lpCompany ? `${m} › ${lpCompany === '__none__' ? 'Firma Yok' : lpCompany}` : m;
+    if (lpMarket === 'fabrika') {
+      title = 'Fabrika Stoğu';
+    } else {
+      const m = lpMarket === 'yurtici' ? 'Yurt İçi' : 'Yurt Dışı';
+      title = lpCompany ? `${m} › ${lpCompany === '__none__' ? 'Firma Yok' : lpCompany}` : m;
+    }
   } else if (lpCurrentTab === 'othermaterials' && lpSection) {
     const s = lpSection === 'koli' ? 'Koli' : 'Poşet';
     title = lpCondition ? `${s} › ${lpCondition === 'yeni' ? 'Yeni' : 'Eski'}` : s;
@@ -961,18 +966,29 @@ function renderLPContent() {
     return;
   }
 
-  // PRODUCTS drill-down (Yurt İçi / Yurt Dışı → Company → Items)
+  // PRODUCTS drill-down (Yurt İçi / Yurt Dışı → Company → Items | Fabrika → Items)
   if (lpCurrentTab === 'products') {
     if (!lpMarket) {
-      const icCnt = products.filter(p=>p.market==='yurtici').length;
+      const icCnt  = products.filter(p=>p.market==='yurtici').length;
       const disCnt = products.filter(p=>p.market==='yurtdisi').length;
-      const noMkt = products.filter(p=>!p.market);
+      const fabCnt = products.filter(p=>p.market==='fabrika').length;
+      const noMkt  = products.filter(p=>!p.market||!['yurtici','yurtdisi','fabrika'].includes(p.market));
       let html = `<div class="dash-nav-grid">`;
       html += makeDrillTile('🏠','var(--blue-l)','Yurt İçi',`${icCnt} ürün`,{market:'yurtici'});
       html += makeDrillTile('✈️','var(--teal-l)','Yurt Dışı',`${disCnt} ürün`,{market:'yurtdisi'});
+      html += makeDrillTile('🏭','var(--purple-l)','Fabrika Stoğu',`${fabCnt} ürün`,{market:'fabrika'});
       html += '</div>';
       if (noMkt.length) html += `<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noMkt.length} ürün henüz piyasa bilgisi içermiyor. Düzenleyerek güncelleyin.</div>`;
       el.innerHTML = html; return;
+    }
+    // Fabrika: no company drill, show items directly
+    if (lpMarket === 'fabrika') {
+      const backIdx = window._lpDrillOptions.length;
+      window._lpDrillOptions.push({market:null, company:null});
+      let items = products.filter(p=>p.market==='fabrika');
+      if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
+      const breadcrumb = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Stok Türleri</button></div>`;
+      el.innerHTML = breadcrumb + renderItemGrid('products', items); return;
     }
     if (!lpCompany) {
       const mktLabel = lpMarket==='yurtici'?'Yurt İçi':'Yurt Dışı';
@@ -1027,16 +1043,27 @@ function renderLPContent() {
       el.innerHTML=html; return;
     }
     if (!lpCondition) {
-      const secLabel=lpSection==='koli'?'Koli':'Poşet';
       const backIdx=window._lpDrillOptions.length;
       window._lpDrillOptions.push({section:null,condition:null});
-      const filtered=othermaterials.filter(i=>i.section===lpSection);
+      if (lpSection === 'poset') {
+        // Poşet: no Yeni/Eski drill, show items directly
+        let items=othermaterials.filter(i=>i.section==='poset');
+        if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.measurements||'').toLowerCase().includes(lpSearchTerm));
+        const breadcrumb=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
+        if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
+        const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
+        const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ölçü: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
+        el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ölçüler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+        return;
+      }
+      // Koli: Yeni/Eski drill
+      const filtered=othermaterials.filter(i=>i.section==='koli');
       const yeniCnt=filtered.filter(i=>i.condition==='yeni').length;
       const eskiCnt=filtered.filter(i=>i.condition==='eski').length;
       let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
       html+=`<div class="dash-nav-grid">`;
-      html+=makeDrillTile('🆕','var(--green-l)','Yeni',`${yeniCnt} çeşit`,{section:lpSection,condition:'yeni'});
-      html+=makeDrillTile('🔄','var(--surface2)','Eski',`${eskiCnt} çeşit`,{section:lpSection,condition:'eski'});
+      html+=makeDrillTile('🆕','var(--green-l)','Yeni',`${yeniCnt} çeşit`,{section:'koli',condition:'yeni'});
+      html+=makeDrillTile('🔄','var(--surface2)','Eski',`${eskiCnt} çeşit`,{section:'koli',condition:'eski'});
       html+='</div>';
       el.innerHTML=html; return;
     }
@@ -1066,6 +1093,7 @@ function selItemMarket(v, btn) {
   editItemMarket = v;
   document.querySelectorAll('#f-market .role-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  document.getElementById('f-company').style.display = v === 'fabrika' ? 'none' : '';
 }
 function selItemSection(v, btn) {
   editItemSection = v;
@@ -1077,10 +1105,11 @@ function selItemCondition(v, btn) {
   editItemCondition = v;
   document.querySelectorAll('#f-condition .role-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  updateMeasurementsVisibility();
 }
 function updateMeasurementsVisibility() {
-  document.getElementById('f-measurements').style.display = (editItemSection==='poset'&&editItemCondition==='yeni') ? '' : 'none';
+  const isPoset = editItemSection === 'poset';
+  document.getElementById('f-condition').style.display = isPoset ? 'none' : '';
+  document.getElementById('f-measurements').style.display = isPoset ? '' : 'none';
 }
 
 function openItemModal(type, id) {
@@ -1107,6 +1136,7 @@ function openItemModal(type, id) {
     document.getElementById('i-company').value = item?.company || (lpCompany&&lpCompany!=='__none__'?lpCompany:'') || '';
     document.querySelectorAll('#f-market .role-btn').forEach(b=>b.classList.remove('active'));
     if (editItemMarket) { const b=document.getElementById('mkt-'+editItemMarket); if(b) b.classList.add('active'); }
+    document.getElementById('f-company').style.display = editItemMarket === 'fabrika' ? 'none' : '';
   }
   if (type === 'materials') {
     document.getElementById('i-supplier').value = item?.supplier || '';
@@ -1118,7 +1148,7 @@ function openItemModal(type, id) {
     document.querySelectorAll('#f-section .role-btn').forEach(b=>b.classList.remove('active'));
     if (editItemSection)   { const b=document.getElementById('sec-'+editItemSection);  if(b) b.classList.add('active'); }
     document.querySelectorAll('#f-condition .role-btn').forEach(b=>b.classList.remove('active'));
-    if (editItemCondition) { const b=document.getElementById('cond-'+editItemCondition); if(b) b.classList.add('active'); }
+    if (editItemCondition && editItemSection !== 'poset') { const b=document.getElementById('cond-'+editItemCondition); if(b) b.classList.add('active'); }
     updateMeasurementsVisibility();
   }
   document.getElementById('item-overlay').classList.add('open');
@@ -1143,8 +1173,8 @@ async function saveItem() {
   }
   if (editType === 'othermaterials') {
     extra.section      = editItemSection   || null;
-    extra.condition    = editItemCondition || null;
-    extra.measurements = (editItemSection==='poset'&&editItemCondition==='yeni') ? (document.getElementById('i-measurements').value.trim()||null) : null;
+    extra.condition    = editItemSection === 'poset' ? null : (editItemCondition || null);
+    extra.measurements = editItemSection === 'poset' ? (document.getElementById('i-measurements').value.trim()||null) : null;
   }
   const btn = document.getElementById('item-save-btn');
   btn.disabled = true; btn.textContent = 'Saving…';
