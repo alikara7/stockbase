@@ -559,7 +559,7 @@ html[data-theme="dark"] .list-panel{background:#000}
         <button class="lp-tab" id="lpt-history"        onclick="lpSwitchTab('history',this)">📋 History</button>
       </div>
       <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-        <button class="btn-add manager-only" id="lp-add-btn" onclick="lpAddItem()">+ Add</button>
+        <button class="btn-add" id="lp-add-btn" onclick="lpAddItem()">+ Add</button>
       </div>
       <div id="lp-content"></div>
     </div>
@@ -686,9 +686,7 @@ function logout() {
 }
 
 function applyRoleUI() {
-  document.querySelectorAll('.manager-only').forEach(el => {
-    el.style.display = role === 'manager' ? '' : 'none';
-  });
+  // role-based UI reserved for future use
 }
 
 // ─── DATA ────────────────────────────────────────────────
@@ -997,7 +995,7 @@ function renderLPContent() {
   if (!el) return;
   window._lpDrillOptions = [];
   const isManager = role === 'manager';
-  const actBtns = (t, id) => `<button class="btn-s b-upd" onclick="openUpdModal('${t}','${id}')">Update</button>${isManager ? `<button class="btn-s b-edit" onclick="openItemModal('${t}','${id}')">Edit</button><button class="btn-s b-del" onclick="confirmDelete('${t}','${id}')">Delete</button>` : ''}`;
+  const actBtns = (t, id) => `<button class="btn-s b-upd" onclick="openUpdModal('${t}','${id}')">Update</button><button class="btn-s b-edit" onclick="openItemModal('${t}','${id}')">Edit</button><button class="btn-s b-del" onclick="confirmDelete('${t}','${id}')">Delete</button>`;
 
   function makeDrillTile(icon, bg, label, sub, opts) {
     const idx = window._lpDrillOptions.length;
