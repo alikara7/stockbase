@@ -394,6 +394,10 @@ html[data-theme="dark"] .list-panel{background:#000}
       <div class="logo">Stock<span>Base</span></div>
     </div>
     <div class="sub">// live storage · synced across all devices</div>
+    <div class="role-row">
+      <button class="role-btn active" onclick="selRole('manager',this)">Manager</button>
+      <button class="role-btn" onclick="selRole('employee',this)">Employee</button>
+    </div>
     <div class="f-row"><label>Username</label><input type="text" id="l-name" placeholder="e.g. Ismail" autocomplete="username"/></div>
     <div class="f-row"><label>Pin Code</label><input type="password" id="l-pin" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
     <button class="btn-primary" onclick="doLogin()">Enter System</button>
