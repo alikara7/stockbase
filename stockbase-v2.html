@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -313,7 +313,7 @@ html[data-theme="dark"] .list-panel{background:#000}
 <!-- Confirm Overlay -->
 <div class="overlay" id="confirm-overlay">
   <div class="modal confirm-modal">
-    <div class="confirm-icon" id="confirm-icon">🗑</div>
+    <div class="confirm-icon" id="confirm-icon">ğŸ—‘</div>
     <div class="confirm-title" id="confirm-title">Delete Item?</div>
     <div class="confirm-desc" id="confirm-desc">This action cannot be undone.</div>
     <div class="m-acts">
@@ -336,20 +336,20 @@ html[data-theme="dark"] .list-panel{background:#000}
     <div class="f-row" id="f-market">
       <label>Piyasa / Market</label>
       <div class="role-row" style="margin:0;grid-template-columns:1fr 1fr 1fr">
-        <button type="button" class="role-btn" id="mkt-yurtici" onclick="selItemMarket('yurtici',this)">Yurt İçi</button>
-        <button type="button" class="role-btn" id="mkt-yurtdisi" onclick="selItemMarket('yurtdisi',this)">Yurt Dışı</button>
+        <button type="button" class="role-btn" id="mkt-yurtici" onclick="selItemMarket('yurtici',this)">Yurt Ä°Ã§i</button>
+        <button type="button" class="role-btn" id="mkt-yurtdisi" onclick="selItemMarket('yurtdisi',this)">Yurt DÄ±ÅŸÄ±</button>
         <button type="button" class="role-btn" id="mkt-fabrika" onclick="selItemMarket('fabrika',this)">Fabrika</button>
       </div>
     </div>
-    <div class="f-row" id="f-company"><label>Firma / Company</label><input type="text" id="i-company" placeholder="Firma adı…"/></div>
+    <div class="f-row" id="f-company"><label>Firma / Company</label><input type="text" id="i-company" placeholder="Firma adÄ±â€¦"/></div>
     <!-- Materials: supplier -->
-    <div class="f-row" id="f-supplier"><label>Tedarikçi / Supplier</label><input type="text" id="i-supplier" placeholder="Tedarikçi adı…"/></div>
+    <div class="f-row" id="f-supplier"><label>TedarikÃ§i / Supplier</label><input type="text" id="i-supplier" placeholder="TedarikÃ§i adÄ±â€¦"/></div>
     <!-- OtherMaterials: section + condition + measurements -->
     <div class="f-row" id="f-section">
-      <label>Bölüm / Section</label>
+      <label>BÃ¶lÃ¼m / Section</label>
       <div class="role-row" style="margin:0">
         <button type="button" class="role-btn" id="sec-koli" onclick="selItemSection('koli',this)">Koli</button>
-        <button type="button" class="role-btn" id="sec-poset" onclick="selItemSection('poset',this)">🛒 Poşet</button>
+        <button type="button" class="role-btn" id="sec-poset" onclick="selItemSection('poset',this)">ğŸ›’ PoÅŸet</button>
       </div>
     </div>
     <div class="f-row" id="f-condition">
@@ -359,7 +359,7 @@ html[data-theme="dark"] .list-panel{background:#000}
         <button type="button" class="role-btn" id="cond-eski" onclick="selItemCondition('eski',this)">Eski</button>
       </div>
     </div>
-    <div class="f-row" id="f-measurements"><label>Ölçüler / Measurements</label><input type="text" id="i-measurements" placeholder="örn. 30x40 cm"/></div>
+    <div class="f-row" id="f-measurements"><label>Ã–lÃ§Ã¼ler / Measurements</label><input type="text" id="i-measurements" placeholder="Ã¶rn. 30x40 cm"/></div>
     <div class="m-acts">
       <button class="btn-cancel" onclick="closeItemModal()">Cancel</button>
       <button class="btn-save" id="item-save-btn" onclick="saveItem()">Save Item</button>
@@ -394,13 +394,13 @@ html[data-theme="dark"] .list-panel{background:#000}
       <div class="mark">S</div>
       <div class="logo">Stock<span>Base</span></div>
     </div>
-    <div class="sub">// live storage · synced across all devices</div>
+    <div class="sub">// live storage Â· synced across all devices</div>
     <div class="role-row">
       <button class="role-btn active" onclick="selRole('manager',this)">Manager</button>
       <button class="role-btn" onclick="selRole('employee',this)">Employee</button>
     </div>
     <div class="f-row"><label>Username</label><input type="text" id="l-name" placeholder="e.g. Ismail" autocomplete="username"/></div>
-    <div class="f-row"><label>Pin Code</label><input type="password" id="l-pin" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="f-row"><label>Pin Code</label><input type="password" id="l-pin" placeholder="â€¢â€¢â€¢â€¢" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
     <button class="btn-primary" onclick="doLogin()">Enter System</button>
     <div class="login-error" id="l-err"></div>
   </div>
@@ -409,7 +409,7 @@ html[data-theme="dark"] .list-panel{background:#000}
 <!-- Logout Confirm Dialog -->
 <div class="logout-overlay" id="logout-overlay" onclick="if(event.target===this)closeLogoutOverlay()">
   <div class="logout-dialog">
-    <div class="ld-icon">🚪</div>
+    <div class="ld-icon">ğŸšª</div>
     <div class="ld-title">Log Out?</div>
     <div class="ld-desc">You will need to enter your PIN again to access the system.</div>
     <div class="ld-btns">
@@ -436,8 +436,8 @@ html[data-theme="dark"] .list-panel{background:#000}
         <span class="uname" id="uname"></span>
         <span class="rbadge" id="rbadge"></span>
       </div>
-      <button class="icon-btn theme-btn" id="theme-toggle" title="Toggle theme">🌙</button>
-      <button class="icon-btn sync-btn" onclick="loadAll()">↻<span class="sync-label"> Sync</span></button>
+      <button class="icon-btn theme-btn" id="theme-toggle" title="Toggle theme">ğŸŒ™</button>
+      <button class="icon-btn sync-btn" onclick="loadAll()">â†»<span class="sync-label"> Sync</span></button>
       <button class="icon-btn logout-btn" onclick="confirmLogout()">Log out</button>
     </div>
   </div>
@@ -445,23 +445,23 @@ html[data-theme="dark"] .list-panel{background:#000}
   <!-- Mobile Bottom Nav -->
   <nav class="mobile-nav">
     <button class="mnav-item active" id="mnav-products" onclick="openListPage('products')">
-      <div class="mnav-icon-wrap"><span class="mnav-icon">🗃️</span></div>
+      <div class="mnav-icon-wrap"><span class="mnav-icon">ğŸ—ƒï¸</span></div>
       <span class="mnav-label">Products</span>
     </button>
     <button class="mnav-item" id="mnav-materials" onclick="openListPage('materials')">
-      <div class="mnav-icon-wrap"><span class="mnav-icon">🌿</span></div>
+      <div class="mnav-icon-wrap"><span class="mnav-icon">ğŸŒ¿</span></div>
       <span class="mnav-label">Materials</span>
     </button>
     <button class="mnav-item" id="mnav-othermaterials" onclick="openListPage('othermaterials')">
-      <div class="mnav-icon-wrap"><span class="mnav-icon">📦</span></div>
+      <div class="mnav-icon-wrap"><span class="mnav-icon">ğŸ“¦</span></div>
       <span class="mnav-label">Other</span>
     </button>
     <button class="mnav-item" id="mnav-history" onclick="openListPage('history')">
-      <div class="mnav-icon-wrap"><span class="mnav-icon">📋</span></div>
+      <div class="mnav-icon-wrap"><span class="mnav-icon">ğŸ“‹</span></div>
       <span class="mnav-label">History</span>
     </button>
     <button class="mnav-item" onclick="confirmLogout()">
-      <div class="mnav-icon-wrap"><span class="mnav-icon">🚪</span></div>
+      <div class="mnav-icon-wrap"><span class="mnav-icon">ğŸšª</span></div>
       <span class="mnav-label">Log out</span>
     </button>
   </nav>
@@ -471,42 +471,42 @@ html[data-theme="dark"] .list-panel{background:#000}
     <!-- Welcome Banner -->
     <div class="dw-banner">
       <div>
-        <div class="dw-title">Welcome back, <span id="dw-name">—</span> 👋</div>
+        <div class="dw-title">Welcome back, <span id="dw-name">â€”</span> ğŸ‘‹</div>
         <div class="dw-sub">Here's an overview of your inventory.</div>
       </div>
-      <div class="dw-icon">🏭</div>
+      <div class="dw-icon">ğŸ­</div>
     </div>
 
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card" onclick="openListPage('products')">
-        <div class="stat-icon si-blue">🗃️</div>
+        <div class="stat-icon si-blue">ğŸ—ƒï¸</div>
         <div class="stat-label">Finished Products</div>
-        <div class="stat-val c-blue" id="s-prod">—</div>
+        <div class="stat-val c-blue" id="s-prod">â€”</div>
         <div class="stat-sub">items in stock</div>
       </div>
       <div class="stat-card" onclick="openListPage('materials')">
-        <div class="stat-icon si-green">🌿</div>
+        <div class="stat-icon si-green">ğŸŒ¿</div>
         <div class="stat-label">Raw Materials</div>
-        <div class="stat-val c-green" id="s-mat">—</div>
+        <div class="stat-val c-green" id="s-mat">â€”</div>
         <div class="stat-sub">items tracked</div>
       </div>
       <div class="stat-card" onclick="openListPage('othermaterials')">
-        <div class="stat-icon si-brown">📦</div>
+        <div class="stat-icon si-brown">ğŸ“¦</div>
         <div class="stat-label">Other Materials</div>
-        <div class="stat-val c-brown" id="s-other">—</div>
+        <div class="stat-val c-brown" id="s-other">â€”</div>
         <div class="stat-sub">items tracked</div>
       </div>
       <div class="stat-card" onclick="openListPage('lowstock')">
-        <div class="stat-icon si-red">⚠️</div>
+        <div class="stat-icon si-red">âš ï¸</div>
         <div class="stat-label">Low Stock</div>
-        <div class="stat-val c-red" id="s-low">—</div>
+        <div class="stat-val c-red" id="s-low">â€”</div>
         <div class="stat-sub">need restocking</div>
       </div>
       <div class="stat-card stat-noclick">
-        <div class="stat-icon si-teal">🕒</div>
+        <div class="stat-icon si-teal">ğŸ•’</div>
         <div class="stat-label">Last Update</div>
-        <div class="stat-val c-teal" style="font-size:13px;line-height:1.6;margin-top:2px;font-family:'DM Mono',monospace" id="s-time">—</div>
+        <div class="stat-val c-teal" style="font-size:13px;line-height:1.6;margin-top:2px;font-family:'DM Mono',monospace" id="s-time">â€”</div>
         <div class="stat-sub" id="s-by"></div>
       </div>
     </div>
@@ -521,24 +521,24 @@ html[data-theme="dark"] .list-panel{background:#000}
       </div>
       <div class="dash-nav-grid">
         <div class="dash-nav-tile" onclick="openListPage('products')">
-          <div class="dnt-icon si-blue">🗃️</div>
-          <div class="dnt-body"><div class="dnt-label">Finished Products</div><div class="dnt-sub" id="dnt-prod-sub">— items</div></div>
-          <div class="dnt-arrow">›</div>
+          <div class="dnt-icon si-blue">ğŸ—ƒï¸</div>
+          <div class="dnt-body"><div class="dnt-label">Finished Products</div><div class="dnt-sub" id="dnt-prod-sub">â€” items</div></div>
+          <div class="dnt-arrow">â€º</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('materials')">
-          <div class="dnt-icon si-green">🌿</div>
-          <div class="dnt-body"><div class="dnt-label">Raw Materials</div><div class="dnt-sub" id="dnt-mat-sub">— items</div></div>
-          <div class="dnt-arrow">›</div>
+          <div class="dnt-icon si-green">ğŸŒ¿</div>
+          <div class="dnt-body"><div class="dnt-label">Raw Materials</div><div class="dnt-sub" id="dnt-mat-sub">â€” items</div></div>
+          <div class="dnt-arrow">â€º</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('othermaterials')">
-          <div class="dnt-icon si-brown">📦</div>
-          <div class="dnt-body"><div class="dnt-label">Other Materials</div><div class="dnt-sub" id="dnt-other-sub">— items</div></div>
-          <div class="dnt-arrow">›</div>
+          <div class="dnt-icon si-brown">ğŸ“¦</div>
+          <div class="dnt-body"><div class="dnt-label">Other Materials</div><div class="dnt-sub" id="dnt-other-sub">â€” items</div></div>
+          <div class="dnt-arrow">â€º</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('history')">
-          <div class="dnt-icon si-teal">📋</div>
-          <div class="dnt-body"><div class="dnt-label">History</div><div class="dnt-sub" id="dnt-hist-sub">— entries</div></div>
-          <div class="dnt-arrow">›</div>
+          <div class="dnt-icon si-teal">ğŸ“‹</div>
+          <div class="dnt-body"><div class="dnt-label">History</div><div class="dnt-sub" id="dnt-hist-sub">â€” entries</div></div>
+          <div class="dnt-arrow">â€º</div>
         </div>
       </div>
     </div>
@@ -548,20 +548,20 @@ html[data-theme="dark"] .list-panel{background:#000}
   <!-- List Panel (slides in over dashboard) -->
   <div class="list-panel" id="list-panel">
     <div class="lp-topbar">
-      <button class="lp-back" onclick="closeListPage()">‹ Dashboard</button>
+      <button class="lp-back" onclick="closeListPage()">â€¹ Dashboard</button>
       <div class="lp-title" id="lp-title">Items</div>
-      <button class="icon-btn" onclick="loadAll()" style="font-size:16px;padding:6px 10px" title="Refresh">↻</button>
+      <button class="icon-btn" onclick="loadAll()" style="font-size:16px;padding:6px 10px" title="Refresh">â†»</button>
     </div>
     <div class="lp-body">
       <div style="margin-bottom:12px">
-        <input class="search-box" style="width:100%;max-width:100%;margin-bottom:0" type="text" id="lp-search" placeholder="Search…" oninput="lpSearch(this.value)"/>
+        <input class="search-box" style="width:100%;max-width:100%;margin-bottom:0" type="text" id="lp-search" placeholder="Searchâ€¦" oninput="lpSearch(this.value)"/>
       </div>
       <div class="lp-tabs">
-        <button class="lp-tab" id="lpt-products"       onclick="lpSwitchTab('products',this)">🗃️ Products</button>
-        <button class="lp-tab" id="lpt-materials"      onclick="lpSwitchTab('materials',this)">🌿 Raw Materials</button>
-        <button class="lp-tab" id="lpt-othermaterials" onclick="lpSwitchTab('othermaterials',this)">📦 Other</button>
-        <button class="lp-tab" id="lpt-lowstock"       onclick="lpSwitchTab('lowstock',this)">⚠️ Low Stock</button>
-        <button class="lp-tab" id="lpt-history"        onclick="lpSwitchTab('history',this)">📋 History</button>
+        <button class="lp-tab" id="lpt-products"       onclick="lpSwitchTab('products',this)">ğŸ—ƒï¸ Products</button>
+        <button class="lp-tab" id="lpt-materials"      onclick="lpSwitchTab('materials',this)">ğŸŒ¿ Raw Materials</button>
+        <button class="lp-tab" id="lpt-othermaterials" onclick="lpSwitchTab('othermaterials',this)">ğŸ“¦ Other</button>
+        <button class="lp-tab" id="lpt-lowstock"       onclick="lpSwitchTab('lowstock',this)">âš ï¸ Low Stock</button>
+        <button class="lp-tab" id="lpt-history"        onclick="lpSwitchTab('history',this)">ğŸ“‹ History</button>
       </div>
       <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
         <button class="btn-add" id="lp-add-btn" onclick="lpAddItem()">+ Add</button>
@@ -588,7 +588,7 @@ let products = [], materials = [], othermaterials = [], history = [];
 let editType = null, editId = null, updTarget = null;
 let editItemMarket = null, editItemSection = null, editItemCondition = null;
 
-// ─── THEME ───────────────────────────────────────────────
+// â”€â”€â”€ THEME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const DARK = ':root{--bg:#000000;--surface:#1c1c1e;--surface2:#2c2c2e;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.14);--green:#30d158;--green-l:rgba(48,209,88,.18);--green-m:rgba(48,209,88,.4);--blue:#0a84ff;--blue-l:rgba(10,132,255,.18);--blue-m:rgba(10,132,255,.4);--brown:#d97706;--brown-l:rgba(217,119,6,.18);--teal:#14b8a6;--teal-l:rgba(20,184,166,.18);--danger:#ff453a;--danger-l:rgba(255,69,58,.18);--warn:#ffd60a;--warn-l:rgba(255,214,10,.18);--purple:#bf5af2;--purple-l:rgba(191,90,242,.18);--text:#f2f2f7;--text2:#ebebf599;--muted:rgba(235,235,245,.4);--blur-nav:rgba(28,28,30,.92);--shadow:0 1px 3px rgba(0,0,0,.6);--shadow-md:0 4px 16px rgba(0,0,0,.7);--shadow-lg:0 12px 36px rgba(0,0,0,.8)}';
 const LIGHT = ':root{--bg:#f2f2f7;--surface:#fff;--surface2:#f2f2f7;--border:rgba(60,60,67,.18);--border2:#cbd5e1;--green:#16a34a;--green-l:#dcfce7;--green-m:#86efac;--blue:#2563eb;--blue-l:#dbeafe;--blue-m:#93c5fd;--brown:#b45309;--brown-l:#fff7ed;--teal:#0d9488;--teal-l:#ccfbf1;--danger:#dc2626;--danger-l:#fee2e2;--warn:#d97706;--warn-l:#fef3c7;--purple:#7c3aed;--purple-l:#ede9fe;--text:#0f172a;--text2:#475569;--muted:#94a3b8;--blur-nav:rgba(242,242,247,.88);--shadow:0 1px 4px rgba(0,0,0,.07),0 0 0 .5px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.1);--shadow-lg:0 10px 28px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}';
 
@@ -596,7 +596,7 @@ function setTheme(t) {
   document.getElementById('theme-style').textContent = t === 'dark' ? DARK : LIGHT;
   document.documentElement.setAttribute('data-theme', t);
   const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  if (btn) btn.textContent = t === 'dark' ? 'â˜€ï¸' : 'ğŸŒ™';
   localStorage.setItem('sb-theme', t);
 }
 function toggleTheme() {
@@ -612,18 +612,18 @@ function toggleTheme() {
   });
 })();
 
-// ─── TOAST ───────────────────────────────────────────────
+// â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toast(msg, type='success', dur=3000) {
-  const icons = {success:'✓', error:'✕', info:'ℹ'};
+  const icons = {success:'âœ“', error:'âœ•', info:'â„¹'};
   const el = document.createElement('div');
   el.className = 'toast ' + type;
-  el.innerHTML = `<span>${icons[type]||'·'}</span><span>${msg}</span>`;
+  el.innerHTML = `<span>${icons[type]||'Â·'}</span><span>${msg}</span>`;
   document.getElementById('toast-box').appendChild(el);
   setTimeout(() => { el.classList.add('toast-out'); setTimeout(() => el.remove(), 280); }, dur);
 }
 
-// ─── CONFIRM ─────────────────────────────────────────────
-function showConfirm({icon='🗑', title, desc, btnLabel='Delete', onConfirm}) {
+// â”€â”€â”€ CONFIRM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function showConfirm({icon='ğŸ—‘', title, desc, btnLabel='Delete', onConfirm}) {
   document.getElementById('confirm-icon').textContent = icon;
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-desc').textContent = desc;
@@ -634,13 +634,13 @@ function showConfirm({icon='🗑', title, desc, btnLabel='Delete', onConfirm}) {
   document.getElementById('confirm-cancel-btn').onclick = close;
 }
 
-// ─── SYNC ────────────────────────────────────────────────
+// â”€â”€â”€ SYNC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setSync(state, text) {
   document.getElementById('sdot').className = 'sync-dot ' + state;
   document.getElementById('stxt').textContent = text;
 }
 
-// ─── AUTH ────────────────────────────────────────────────
+// â”€â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function selRole(r, btn) {
   role = r;
   document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
@@ -693,9 +693,9 @@ function applyRoleUI() {
   // role-based UI reserved for future use
 }
 
-// ─── DATA ────────────────────────────────────────────────
+// â”€â”€â”€ DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadAll() {
-  setSync('syncing', 'loading…');
+  setSync('syncing', 'loadingâ€¦');
   try {
     const [p, m, o, h] = await Promise.all([
       sb.from('products').select('*').order('name'),
@@ -723,7 +723,7 @@ function subscribeRealtime() {
     .subscribe();
 }
 
-// ─── RENDER ──────────────────────────────────────────────
+// â”€â”€â”€ RENDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function render() {
   renderStats();
   renderDashboardPreviews();
@@ -737,9 +737,9 @@ function getList(t) {
 }
 
 function getStatus(item) {
-  if (item.qty <= item.min) return { cls:'low', pill:'pill-low', label:'⚠ Low' };
+  if (item.qty <= item.min) return { cls:'low', pill:'pill-low', label:'âš  Low' };
   if (item.qty <= item.min * 1.5) return { cls:'warn', pill:'pill-warn', label:'~ Warning' };
-  return { cls:'ok', pill:'pill-ok', label:'✓ OK' };
+  return { cls:'ok', pill:'pill-ok', label:'âœ“ OK' };
 }
 
 function renderStats() {
@@ -773,14 +773,14 @@ function renderDashboardPreviews() {
                ...othermaterials.map(i=>({...i,_type:'othermaterials'}))];
   const lowItems = all.filter(i=>i.qty<=i.min).sort((a,b)=>a.qty-b.qty).slice(0,3);
   const recentH  = history.slice(0,3);
-  const actionIcon = a => a==='add'?'➕':a==='update'?'✏️':a==='delete'?'🗑️':'🕒';
+  const actionIcon = a => a==='add'?'â•':a==='update'?'âœï¸':a==='delete'?'ğŸ—‘ï¸':'ğŸ•’';
   const actionColor= a => a==='add'?'green':a==='delete'?'red':'teal';
 
   function buildRow(icon, iconColor, name, meta, rightVal, rightColor, fn) {
     return `<div class="preview-row" onclick="${fn}">
       <div class="pr-icon pri-${iconColor}">${icon}</div>
       <div class="pr-body"><div class="pr-name">${esc(name)}</div><div class="pr-meta">${meta}</div></div>
-      <div class="pr-end"><span class="pr-qty c-${rightColor}">${rightVal}</span><span class="pr-chevron">›</span></div>
+      <div class="pr-end"><span class="pr-qty c-${rightColor}">${rightVal}</span><span class="pr-chevron">â€º</span></div>
     </div>`;
   }
 
@@ -789,15 +789,15 @@ function renderDashboardPreviews() {
   // LOW STOCK (always shown even if empty)
   html += `<div class="dash-section">
     <div class="dash-section-hdr">
-      <span class="dash-section-lbl">⚠️ Low Stock</span>
-      <button class="dash-section-act" onclick="openListPage('lowstock')">See all →</button>
+      <span class="dash-section-lbl">âš ï¸ Low Stock</span>
+      <button class="dash-section-act" onclick="openListPage('lowstock')">See all â†’</button>
     </div>
     <div class="preview-list">`;
   if (lowItems.length) {
-    lowItems.forEach(i => html += buildRow('⚠️','red', i.name,
-      `${i.qty} ${i.unit||''} • min ${i.min}`, 'Low','red', `openListPage('lowstock')`));
+    lowItems.forEach(i => html += buildRow('âš ï¸','red', i.name,
+      `${i.qty} ${i.unit||''} â€¢ min ${i.min}`, 'Low','red', `openListPage('lowstock')`));
   } else {
-    html += `<div class="empty" style="padding:20px;text-align:center;font-size:13px">✅ All items sufficiently stocked</div>`;
+    html += `<div class="empty" style="padding:20px;text-align:center;font-size:13px">âœ… All items sufficiently stocked</div>`;
   }
   html += '</div></div>';
 
@@ -806,14 +806,14 @@ function renderDashboardPreviews() {
     html += `<div class="dash-section">
       <div class="dash-section-hdr">
         <span class="dash-section-lbl">Recent Activity</span>
-        <button class="dash-section-act" onclick="openListPage('history')">See all →</button>
+        <button class="dash-section-act" onclick="openListPage('history')">See all â†’</button>
       </div>
       <div class="preview-list">`;
     recentH.forEach(h => {
       const ts = h.time ? h.time.replace('T',' ').slice(0,16) : '';
-      const txt = h.text ? (h.text.length>48 ? h.text.slice(0,46)+'…':h.text) : '—';
+      const txt = h.text ? (h.text.length>48 ? h.text.slice(0,46)+'â€¦':h.text) : 'â€”';
       html += buildRow(actionIcon(h.action), actionColor(h.action), txt,
-        `${esc(h.username)} • ${ts}`, h.action, actionColor(h.action), `openListPage('history')`);
+        `${esc(h.username)} â€¢ ${ts}`, h.action, actionColor(h.action), `openListPage('history')`);
     });
     html += '</div></div>';
   }
@@ -824,37 +824,37 @@ function renderDashboardPreviews() {
 function renderAlerts() {}
 function updateTabCounts() {}
 
-// ─── NAVIGATION ──────────────────────────────────────────
+// â”€â”€â”€ NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function activateTab(name) { openListPage(name); }
 function switchTab(name) { openListPage(name); }
 function filterTable(type, val) { lpSearchTerm = val.toLowerCase(); renderLPContent(); }
 function filterHistory(val) { lpSearchTerm = val.toLowerCase(); renderLPContent(); }
 
-// ─── LIST PANEL ───────────────────────────────────────────
+// â”€â”€â”€ LIST PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let lpCurrentTab = 'products', lpSearchTerm = '';
 let lpMarket = null, lpCompany = null, lpSection = null, lpCondition = null;
 window._lpDrillOptions = [];
 
 const LP_TITLES = {
-  products:      '🗃️ Finished Products',
-  materials:     '🌿 Raw Materials',
-  othermaterials:'📦 Other Materials',
-  lowstock:      '⚠️ Low Stock',
-  history:       '📋 History'
+  products:      'ğŸ—ƒï¸ Finished Products',
+  materials:     'ğŸŒ¿ Raw Materials',
+  othermaterials:'ğŸ“¦ Other Materials',
+  lowstock:      'âš ï¸ Low Stock',
+  history:       'ğŸ“‹ History'
 };
 
 function updateLPTitle() {
   let title = LP_TITLES[lpCurrentTab] || 'Items';
   if (lpCurrentTab === 'products' && lpMarket) {
     if (lpMarket === 'fabrika') {
-      title = 'Fabrika Stoğu';
+      title = 'Fabrika StoÄŸu';
     } else {
-      const m = lpMarket === 'yurtici' ? 'Yurt İçi' : 'Yurt Dışı';
-      title = lpCompany ? `${m} › ${lpCompany === '__none__' ? 'Firma Yok' : lpCompany}` : m;
+      const m = lpMarket === 'yurtici' ? 'Yurt Ä°Ã§i' : 'Yurt DÄ±ÅŸÄ±';
+      title = lpCompany ? `${m} â€º ${lpCompany === '__none__' ? 'Firma Yok' : lpCompany}` : m;
     }
   } else if (lpCurrentTab === 'othermaterials' && lpSection) {
-    const s = lpSection === 'koli' ? 'Koli' : 'Poşet';
-    title = lpCondition ? `${s} › ${lpCondition === 'yeni' ? 'Yeni' : 'Eski'}` : s;
+    const s = lpSection === 'koli' ? 'Koli' : 'PoÅŸet';
+    title = lpCondition ? `${s} â€º ${lpCondition === 'yeni' ? 'Yeni' : 'Eski'}` : s;
   }
   const el = document.getElementById('lp-title');
   if (el) el.textContent = title;
@@ -926,20 +926,20 @@ function updateSearchPlaceholder() {
   const el = document.getElementById('lp-search');
   if (!el) return;
   if (lpCurrentTab === 'products') {
-    if (!lpMarket) el.placeholder = 'Piyasa ara…';
-    else if (!lpCompany && lpMarket !== 'fabrika') el.placeholder = 'Firma ara…';
-    else el.placeholder = 'Ürün ara…';
+    if (!lpMarket) el.placeholder = 'Piyasa araâ€¦';
+    else if (!lpCompany && lpMarket !== 'fabrika') el.placeholder = 'Firma araâ€¦';
+    else el.placeholder = 'ÃœrÃ¼n araâ€¦';
   } else if (lpCurrentTab === 'materials') {
-    el.placeholder = 'Ürün veya tedarikçi ara…';
+    el.placeholder = 'ÃœrÃ¼n veya tedarikÃ§i araâ€¦';
   } else if (lpCurrentTab === 'othermaterials') {
-    if (!lpSection) el.placeholder = 'Bölüm ara…';
-    else el.placeholder = 'Ürün ara…';
+    if (!lpSection) el.placeholder = 'BÃ¶lÃ¼m araâ€¦';
+    else el.placeholder = 'ÃœrÃ¼n araâ€¦';
   } else if (lpCurrentTab === 'lowstock') {
-    el.placeholder = 'Ürün ara…';
+    el.placeholder = 'ÃœrÃ¼n araâ€¦';
   } else if (lpCurrentTab === 'history') {
-    el.placeholder = 'Geçmiş ara…';
+    el.placeholder = 'GeÃ§miÅŸ araâ€¦';
   } else {
-    el.placeholder = 'Search…';
+    el.placeholder = 'Searchâ€¦';
   }
 }
 function lpAddItem() { if (lpCurrentTab !== 'lowstock' && lpCurrentTab !== 'history') openItemModal(lpCurrentTab, null); }
@@ -958,21 +958,21 @@ function renderLPContent() {
     return `<div class="dash-nav-tile" onclick="lpDrillByIdx(${idx})">
       <div class="dnt-icon" style="background:${bg}">${icon}</div>
       <div class="dnt-body"><div class="dnt-label">${label}</div><div class="dnt-sub">${sub}</div></div>
-      <div class="dnt-arrow">›</div></div>`;
+      <div class="dnt-arrow">â€º</div></div>`;
   }
 
   function renderItemGrid(type, items) {
     if (!items.length) return `<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`;
-    const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
-    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
-    return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+    const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'â€”')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'â€”')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
+    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'â€”')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'â€”')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
+    return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
   }
 
   // HISTORY
   if (lpCurrentTab === 'history') {
     const f = lpSearchTerm ? history.filter(h=>(h.text||'').toLowerCase().includes(lpSearchTerm)||(h.username||'').toLowerCase().includes(lpSearchTerm)) : history;
     if (!f.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?'No results':'No history yet'}</div>`; return; }
-    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} — by ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">Clear History</button></div>`:'');
+    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} â€” by ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">Clear History</button></div>`:'');
     return;
   }
 
@@ -981,14 +981,14 @@ function renderLPContent() {
     const all = [...products.map(i=>({...i,_type:'products'})),...materials.map(i=>({...i,_type:'materials'})),...othermaterials.map(i=>({...i,_type:'othermaterials'}))];
     let items = all.filter(i=>i.qty<=i.min);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
-    if (!items.length) { el.innerHTML=`<div class="empty">✅ ${lpSearchTerm?'No results':'All items are sufficiently stocked'}</div>`; return; }
-    const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(i._type,i.id)}</div></td></tr>`;}).join('');
-    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(i._type,i.id)}</div></div>`;}).join('');
-    el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+    if (!items.length) { el.innerHTML=`<div class="empty">âœ… ${lpSearchTerm?'No results':'All items are sufficiently stocked'}</div>`; return; }
+    const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'â€”')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'â€”')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(i._type,i.id)}</div></td></tr>`;}).join('');
+    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'â€”')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'â€”')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(i._type,i.id)}</div></div>`;}).join('');
+    el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     return;
   }
 
-  // PRODUCTS drill-down (Yurt İçi / Yurt Dışı → Company → Items | Fabrika → Items)
+  // PRODUCTS drill-down (Yurt Ä°Ã§i / Yurt DÄ±ÅŸÄ± â†’ Company â†’ Items | Fabrika â†’ Items)
   if (lpCurrentTab === 'products') {
     if (!lpMarket) {
       const icCnt  = products.filter(p=>p.market==='yurtici').length;
@@ -996,11 +996,11 @@ function renderLPContent() {
       const fabCnt = products.filter(p=>p.market==='fabrika').length;
       const noMkt  = products.filter(p=>!p.market||!['yurtici','yurtdisi','fabrika'].includes(p.market));
       let html = `<div class="dash-nav-grid">`;
-      html += makeDrillTile('🏠','var(--blue-l)','Yurt İçi',`${icCnt} ürün`,{market:'yurtici'});
-      html += makeDrillTile('✈️','var(--teal-l)','Yurt Dışı',`${disCnt} ürün`,{market:'yurtdisi'});
-      html += makeDrillTile('🏭','var(--purple-l)','Fabrika Stoğu',`${fabCnt} ürün`,{market:'fabrika'});
+      html += makeDrillTile('ğŸ ','var(--blue-l)','Yurt Ä°Ã§i',`${icCnt} Ã¼rÃ¼n`,{market:'yurtici'});
+      html += makeDrillTile('âœˆï¸','var(--teal-l)','Yurt DÄ±ÅŸÄ±',`${disCnt} Ã¼rÃ¼n`,{market:'yurtdisi'});
+      html += makeDrillTile('ğŸ­','var(--purple-l)','Fabrika StoÄŸu',`${fabCnt} Ã¼rÃ¼n`,{market:'fabrika'});
       html += '</div>';
-      if (noMkt.length) html += `<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noMkt.length} ürün henüz piyasa bilgisi içermiyor. Düzenleyerek güncelleyin.</div>`;
+      if (noMkt.length) html += `<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">â„¹ï¸ ${noMkt.length} Ã¼rÃ¼n henÃ¼z piyasa bilgisi iÃ§ermiyor. DÃ¼zenleyerek gÃ¼ncelleyin.</div>`;
       el.innerHTML = html; return;
     }
     // Fabrika: no company drill, show items directly
@@ -1009,11 +1009,11 @@ function renderLPContent() {
       window._lpDrillOptions.push({market:null, company:null});
       let items = products.filter(p=>p.market==='fabrika');
       if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
-      const breadcrumb = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Stok Türleri</button></div>`;
+      const breadcrumb = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ Stok TÃ¼rleri</button></div>`;
       el.innerHTML = breadcrumb + renderItemGrid('products', items); return;
     }
     if (!lpCompany) {
-      const mktLabel = lpMarket==='yurtici'?'Yurt İçi':'Yurt Dışı';
+      const mktLabel = lpMarket==='yurtici'?'Yurt Ä°Ã§i':'Yurt DÄ±ÅŸÄ±';
       const backIdx = window._lpDrillOptions.length;
       window._lpDrillOptions.push({market:null,company:null});
       const filtered = products.filter(p=>p.market===lpMarket);
@@ -1021,90 +1021,90 @@ function renderLPContent() {
       const noComp = filtered.filter(p=>!p.company);
       if (lpSearchTerm) companies = companies.filter(c => c.toLowerCase().includes(lpSearchTerm));
       const showNoComp = noComp.length && (!lpSearchTerm || 'firma yok'.includes(lpSearchTerm));
-      let html = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Piyasalar</button></div>`;
+      let html = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ Piyasalar</button></div>`;
       if (!companies.length && !showNoComp) {
-        html += `<div class="empty">${lpSearchTerm ? 'Firma bulunamadı' : mktLabel+' henüz ürün yok'}</div>`; el.innerHTML=html; return;
+        html += `<div class="empty">${lpSearchTerm ? 'Firma bulunamadÄ±' : mktLabel+' henÃ¼z Ã¼rÃ¼n yok'}</div>`; el.innerHTML=html; return;
       }
       html += `<div class="dash-nav-grid">`;
-      companies.forEach(c => html += makeDrillTile('🏢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} ürün`,{market:lpMarket,company:c}));
-      if (showNoComp) html += makeDrillTile('❓','var(--surface2)','Firma Yok',`${noComp.length} ürün`,{market:lpMarket,company:'__none__'});
+      companies.forEach(c => html += makeDrillTile('ğŸ¢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} Ã¼rÃ¼n`,{market:lpMarket,company:c}));
+      if (showNoComp) html += makeDrillTile('â“','var(--surface2)','Firma Yok',`${noComp.length} Ã¼rÃ¼n`,{market:lpMarket,company:'__none__'});
       html += '</div>';
       el.innerHTML = html; return;
     }
     // Items level
-    const mktLabel = lpMarket==='yurtici'?'Yurt İçi':'Yurt Dışı';
+    const mktLabel = lpMarket==='yurtici'?'Yurt Ä°Ã§i':'Yurt DÄ±ÅŸÄ±';
     const compLabel = lpCompany==='__none__'?'Firma Yok':lpCompany;
     const backIdx = window._lpDrillOptions.length;
     window._lpDrillOptions.push({market:lpMarket,company:null});
     let items = products.filter(p=>p.market===lpMarket && (lpCompany==='__none__'?!p.company:p.company===lpCompany));
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
-    const breadcrumb = `<div style="margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${esc(mktLabel)}</button><span style="color:var(--muted);font-size:13px">›</span><span style="font-size:13px;font-weight:700">${esc(compLabel)}</span></div>`;
+    const breadcrumb = `<div style="margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ ${esc(mktLabel)}</button><span style="color:var(--muted);font-size:13px">â€º</span><span style="font-size:13px;font-weight:700">${esc(compLabel)}</span></div>`;
     el.innerHTML = breadcrumb + renderItemGrid('products', items); return;
   }
 
-  // RAW MATERIALS — show supplier in table
+  // RAW MATERIALS â€” show supplier in table
   if (lpCurrentTab === 'materials') {
     let items = materials;
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
-    const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
-    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
-    el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+    const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'â€”')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'â€”')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'â€”')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
+    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'â€”')}${i.supplier?' Â· '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'â€”')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
+    el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     return;
   }
 
-  // OTHER MATERIALS drill-down (Koli / Poşet → Yeni / Eski → Items)
+  // OTHER MATERIALS drill-down (Koli / PoÅŸet â†’ Yeni / Eski â†’ Items)
   if (lpCurrentTab === 'othermaterials') {
     if (!lpSection) {
       const koliCnt=othermaterials.filter(i=>i.section==='koli').length;
       const posetCnt=othermaterials.filter(i=>i.section==='poset').length;
       const noSec=othermaterials.filter(i=>!i.section);
       let html=`<div class="dash-nav-grid">`;
-      html+=makeDrillTile('📦','var(--brown-l)','Koli',`${koliCnt} çeşit`,{section:'koli'});
-      html+=makeDrillTile('🛒','var(--green-l)','Poşet',`${posetCnt} çeşit`,{section:'poset'});
+      html+=makeDrillTile('ğŸ“¦','var(--brown-l)','Koli',`${koliCnt} Ã§eÅŸit`,{section:'koli'});
+      html+=makeDrillTile('ğŸ›’','var(--green-l)','PoÅŸet',`${posetCnt} Ã§eÅŸit`,{section:'poset'});
       html+='</div>';
-      if (noSec.length) html+=`<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noSec.length} ürün bölüm bilgisi içermiyor.</div>`;
+      if (noSec.length) html+=`<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">â„¹ï¸ ${noSec.length} Ã¼rÃ¼n bÃ¶lÃ¼m bilgisi iÃ§ermiyor.</div>`;
       el.innerHTML=html; return;
     }
     if (!lpCondition) {
       const backIdx=window._lpDrillOptions.length;
       window._lpDrillOptions.push({section:null,condition:null});
       if (lpSection === 'poset') {
-        // Poşet: no Yeni/Eski drill, show items directly
+        // PoÅŸet: no Yeni/Eski drill, show items directly
         let items=othermaterials.filter(i=>i.section==='poset');
         if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.measurements||'').toLowerCase().includes(lpSearchTerm));
-        const breadcrumb=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
+        const breadcrumb=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ BÃ¶lÃ¼mler</button></div>`;
         if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
-        const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
-        const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ölçü: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
-        el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ölçüler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+        const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'â€”')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'â€”')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
+        const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ã–lÃ§Ã¼: ${esc(i.measurements||'â€”')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'â€”')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
+        el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ã–lÃ§Ã¼ler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
         return;
       }
       // Koli: Yeni/Eski drill
       const filtered=othermaterials.filter(i=>i.section==='koli');
       const yeniCnt=filtered.filter(i=>i.condition==='yeni').length;
       const eskiCnt=filtered.filter(i=>i.condition==='eski').length;
-      let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
+      let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ BÃ¶lÃ¼mler</button></div>`;
       html+=`<div class="dash-nav-grid">`;
-      html+=makeDrillTile('🆕','var(--green-l)','Yeni',`${yeniCnt} çeşit`,{section:'koli',condition:'yeni'});
-      html+=makeDrillTile('🔄','var(--surface2)','Eski',`${eskiCnt} çeşit`,{section:'koli',condition:'eski'});
+      html+=makeDrillTile('ğŸ†•','var(--green-l)','Yeni',`${yeniCnt} Ã§eÅŸit`,{section:'koli',condition:'yeni'});
+      html+=makeDrillTile('ğŸ”„','var(--surface2)','Eski',`${eskiCnt} Ã§eÅŸit`,{section:'koli',condition:'eski'});
       html+='</div>';
       el.innerHTML=html; return;
     }
     // Items level for other materials
-    const secLabel=lpSection==='koli'?'Koli':'Poşet';
+    const secLabel=lpSection==='koli'?'Koli':'PoÅŸet';
     const condLabel=lpCondition==='yeni'?'Yeni':'Eski';
     const showMsr=lpSection==='poset'&&lpCondition==='yeni';
     const backIdx=window._lpDrillOptions.length;
     window._lpDrillOptions.push({section:lpSection,condition:null});
     let items=othermaterials.filter(i=>i.section===lpSection&&i.condition===lpCondition);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.measurements||'').toLowerCase().includes(lpSearchTerm));
-    const breadcrumb=`<div style="margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${secLabel}</button><span style="color:var(--muted);font-size:13px">›</span><span style="font-size:13px;font-weight:700">${condLabel}</span></div>`;
+    const breadcrumb=`<div style="margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">â€¹ ${secLabel}</button><span style="color:var(--muted);font-size:13px">â€º</span><span style="font-size:13px;font-weight:700">${condLabel}</span></div>`;
     if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
     if (showMsr) {
-      const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
-      const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ölçü: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
-      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ölçüler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list" style="display:block">${cards}</div>`;
+      const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'â€”')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'â€”')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
+      const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ã–lÃ§Ã¼: ${esc(i.measurements||'â€”')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'â€”')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
+      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ã–lÃ§Ã¼ler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     } else {
       el.innerHTML = breadcrumb + renderItemGrid('othermaterials', items);
     }
@@ -1112,7 +1112,7 @@ function renderLPContent() {
   }
 }
 
-// ─── ITEM MODAL ──────────────────────────────────────────
+// â”€â”€â”€ ITEM MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function selItemMarket(v, btn) {
   editItemMarket = v;
   document.querySelectorAll('#f-market .role-btn').forEach(b=>b.classList.remove('active'));
@@ -1201,29 +1201,29 @@ async function saveItem() {
     extra.measurements = editItemSection === 'poset' ? (document.getElementById('i-measurements').value.trim()||null) : null;
   }
   const btn = document.getElementById('item-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = 'Savingâ€¦';
   try {
     if (editId) {
       const old = getList(editType).find(i => i.id === editId);
       await sb.from(editType).update({ name, category: cat, qty, unit, min, ...extra }).eq('id', editId);
-      await addHistory('update', `Updated "${name}" — qty: ${old.qty} → ${qty} ${unit}`);
+      await addHistory('update', `Updated "${name}" â€” qty: ${old.qty} â†’ ${qty} ${unit}`);
       toast('Item updated');
     } else {
       await sb.from(editType).insert({ id: uid(), name, category: cat, qty, unit, min, ...extra });
-      await addHistory('add', `Added "${name}" to ${editType} — qty: ${qty} ${unit}`);
+      await addHistory('add', `Added "${name}" to ${editType} â€” qty: ${qty} ${unit}`);
       toast('Item added');
     }
     closeItemModal();
-  } catch(e) { toast('Save failed — check connection', 'error'); }
+  } catch(e) { toast('Save failed â€” check connection', 'error'); }
   btn.disabled = false; btn.textContent = 'Save Item';
 }
 
-// ─── UPDATE MODAL ────────────────────────────────────────
+// â”€â”€â”€ UPDATE MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openUpdModal(type, id) {
   updTarget = { type, id };
   const item = getList(type).find(i => i.id === id);
   document.getElementById('upd-cur').innerHTML =
-    `<b>${esc(item.name)}</b><br>Current: <span>${item.qty} ${esc(item.unit)}</span> &nbsp;·&nbsp; Min: <span>${item.min}</span>`;
+    `<b>${esc(item.name)}</b><br>Current: <span>${item.qty} ${esc(item.unit)}</span> &nbsp;Â·&nbsp; Min: <span>${item.min}</span>`;
   document.getElementById('u-action').value = 'set';
   document.getElementById('u-amount').value = '';
   document.getElementById('upd-overlay').classList.add('open');
@@ -1236,7 +1236,7 @@ async function saveUpdate() {
   const amount = parseFloat(document.getElementById('u-amount').value);
   if (isNaN(amount) || amount < 0) { toast('Enter a valid amount', 'error'); return; }
   const btn = document.getElementById('upd-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = 'Savingâ€¦';
   const { type, id } = updTarget;
   const item = getList(type).find(i => i.id === id);
   const oldQty = item.qty;
@@ -1244,7 +1244,7 @@ async function saveUpdate() {
   try {
     await sb.from(type).update({ qty: newQty }).eq('id', id);
     const desc = action === 'set' ? `set to ${newQty}` : action === 'add'
-      ? `+${amount} (${oldQty}→${newQty})` : `-${amount} (${oldQty}→${newQty})`;
+      ? `+${amount} (${oldQty}â†’${newQty})` : `-${amount} (${oldQty}â†’${newQty})`;
     await addHistory('update', `"${item.name}" stock: ${desc} ${item.unit}`);
     toast('Stock updated');
     closeUpdModal();
@@ -1252,7 +1252,7 @@ async function saveUpdate() {
   btn.disabled = false; btn.textContent = 'Update Stock';
 }
 
-// ─── DELETE ──────────────────────────────────────────────
+// â”€â”€â”€ DELETE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function confirmDelete(type, id) {
   const item = getList(type).find(i => i.id === id);
   showConfirm({
@@ -1270,10 +1270,10 @@ async function deleteItem(type, id) {
   } catch(e) { toast('Delete failed', 'error'); }
 }
 
-// ─── HISTORY ─────────────────────────────────────────────
+// â”€â”€â”€ HISTORY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function confirmClearHistory() {
   showConfirm({
-    icon: '🗑', title: 'Clear History?',
+    icon: 'ğŸ—‘', title: 'Clear History?',
     desc: 'All movement history will be deleted permanently.',
     btnLabel: 'Clear All',
     onConfirm: clearHistory
@@ -1295,7 +1295,7 @@ async function addHistory(action, text) {
   } catch(e) {}
 }
 
-// ─── UTILS ───────────────────────────────────────────────
+// â”€â”€â”€ UTILS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 </script>
