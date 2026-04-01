@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1a1d27" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <title>StockBase</title>
@@ -306,6 +306,10 @@ html[data-theme="dark"] .logout-dialog{background:#1c1c1e}
 .dnt-arrow{font-size:18px;color:var(--muted);flex-shrink:0}
 html[data-theme="dark"] .list-panel{background:#000}
 @media(max-width:700px){.lp-topbar{height:calc(54px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 14px 0}.lp-body{padding:12px 14px 100px}}
+@media all and (display-mode: standalone){
+  .topbar{padding-top:env(safe-area-inset-top,48px)}
+  .lp-topbar{padding-top:env(safe-area-inset-top,48px)}
+}
 </style>
 
 </head>
