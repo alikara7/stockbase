@@ -1,0 +1,26 @@
+<body>
+<script>
+function make(size) {
+  var c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  var ctx = c.getContext('2d');
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, size * 0.18);
+  ctx.fillStyle = '#16a34a';
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold ' + (size * 0.55) + 'px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('S', size/2, size/2 + size*0.02);
+  return c.toDataURL('image/png').split(',')[1];
+}
+[192, 512].forEach(function(s) {
+  var a = document.createElement('a');
+  a.href = 'data:image/png;base64,' + make(s);
+  a.download = 'icon-' + s + '.png';
+  a.click();
+});
+document.body.innerHTML = '<h1 style="color:#fff;font-family:sans-serif">Icons downloaded! Close this tab.</h1>';
+</script>
+</body>
