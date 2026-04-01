@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>StockBase — Dashboard Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --bg:        #f2f2f7;
+  --bg2:       #e5e5ea;
+  --surface:   #ffffff;
+  --surface2:  #f2f2f7;
+  --sep:       rgba(60,60,67,.13);
+  --border:    rgba(60,60,67,.18);
+
+  /* Brand colours */
+  --blue:      #2563eb;  --blue-l:   #dbeafe;
+  --green:     #16a34a;  --green-l:  #dcfce7;
+  --brown:     #b45309;  --brown-l:  #fff7ed;
+  --red:       #dc2626;  --red-l:    #fee2e2;
+  --warn:      #d97706;  --warn-l:   #fef3c7;
+  --purple:    #7c3aed;  --purple-l: #ede9fe;
+  --teal:      #0d9488;  --teal-l:   #ccfbf1;
+
+  --text:      #000;
+  --text2:     rgba(60,60,67,.60);
+  --muted:     rgba(60,60,67,.30);
+  --blur-nav:  rgba(242,242,247,.90);
+  --shadow:    0 1px 4px rgba(0,0,0,.07), 0 0 0 .5px rgba(0,0,0,.05);
+  --shadow-lg: 0 8px 28px rgba(0,0,0,.10), 0 0 0 .5px rgba(0,0,0,.04);
+}
+
+/* ── iOS-quality dark mode ── */
+html[data-theme="dark"] {
+  --bg:        #000000;
+  --bg2:       #1c1c1e;
+  --surface:   #1c1c1e;
+  --surface2:  #2c2c2e;
+  --sep:       rgba(255,255,255,.08);
+  --border:    rgba(255,255,255,.10);
+
+  --blue:      #0a84ff;  --blue-l:   rgba(10,132,255,.18);
+  --green:     #30d158;  --green-l:  rgba(48,209,88,.18);
+  --brown:     #d97706;  --brown-l:  rgba(217,119,6,.18);
+  --red:       #ff453a;  --red-l:    rgba(255,69,58,.18);
+  --warn:      #ff9f0a;  --warn-l:   rgba(255,159,10,.18);
+  --purple:    #bf5af2;  --purple-l: rgba(191,90,242,.18);
+  --teal:      #14b8a6;  --teal-l:   rgba(20,184,166,.18);
+
+  --text:      #ffffff;
+  --text2:     rgba(235,235,245,.60);
+  --muted:     rgba(235,235,245,.25);
+  --blur-nav:  rgba(28,28,30,.92);
+  --shadow:    0 2px 12px rgba(0,0,0,.5), 0 0 0 .5px rgba(255,255,255,.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.6), 0 0 0 .5px rgba(255,255,255,.05);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { overflow: hidden; height: 100%; }
+body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'Inter', sans-serif;
+  font-size: 15px;
+  transition: background .3s, color .3s;
+}
+
+/* ═══════════════════════════════════════════════
+   PREVIEW BANNER
+═══════════════════════════════════════════════ */
+.pv-banner {
+  flex-shrink: 0;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 16px;
+  letter-spacing: .01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.pv-banner span { opacity: .8; font-weight: 400; }
+.pv-theme-btn {
+  background: rgba(255,255,255,.22);
+  border: none;
+  border-radius: 100px;
+  padding: 4px 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+}
+.pv-theme-btn:hover { background: rgba(255,255,255,.35); }
+
+/* ═══════════════════════════════════════════════
+   APP FRAME + VIEW TRANSITIONS
+═══════════════════════════════════════════════ */
+.app-frame {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: transform .44s cubic-bezier(.32,.72,0,1);
+  will-change: transform;
+}
+
+.v-list { transform: translateX(100%); }
+.app-frame.show-list .v-dash  { transform: translateX(-30%); }
+.app-frame.show-list .v-list  { transform: translateX(0); }
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.topbar {
+  flex-shrink: 0;
+  height: 54px;
+  background: var(--blur-nav);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  border-bottom: .5px solid var(--sep);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 10;
+}
+.tb-left  { display: flex; align-items: center; gap: 10px; }
+.tb-right { display: flex; align-items: center; gap: 8px; }
+.tb-center { position: absolute; left: 50%; transform: translateX(-50%); font-size: 15px; font-weight: 700; pointer-events: none; }
+
+.mark { width: 30px; height: 30px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.logo { font-size: 16px; font-weight: 700; letter-spacing: -.3px; }
+.logo span { color: var(--green); }
+.sync-pill { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); padding: 3px 9px; background: var(--surface2); border-radius: 100px; border: .5px solid var(--sep); }
+.sdot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+.icon-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--surface2); border: .5px solid var(--sep); display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; color: var(--text2); transition: transform .15s; }
+.icon-btn:hover { transform: scale(1.1); }
+
+/* User chip */
+.user-chip { display: flex; align-items: center; gap: 7px; padding: 3px 10px 3px 3px; background: var(--surface2); border: .5px solid var(--sep); border-radius: 100px; cursor: default; }
+.uavatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,var(--green),#15803d); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.uname { font-size: 13px; font-weight: 600; }
+.rbadge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+.badge-manager { background: var(--green-l); color: var(--green); }
+
+/* Logout confirm dialog */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.confirm-overlay.open { display: flex; }
+.confirm-dialog {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 28px 24px 20px;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: dialogPop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes dialogPop {
+  from { opacity: 0; transform: scale(.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.cd-icon  { font-size: 38px; margin-bottom: 10px; }
+.cd-title { font-size: 18px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 8px; }
+.cd-desc  { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 22px; }
+.cd-btns  { display: flex; gap: 10px; }
+.cd-cancel {
+  flex: 1; padding: 13px;
+  background: var(--surface2); border: .5px solid var(--sep);
+  border-radius: 13px; color: var(--text);
+  font-family: inherit; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.cd-cancel:hover { opacity: .75; }
+.cd-confirm {
+  flex: 1; padding: 13px;
+  background: var(--red); border: none;
+  border-radius: 13px; color: #fff;
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: opacity .15s;
+}
+.cd-confirm:hover { opacity: .85; }
+
+/* Back button */
+.back-btn {
+  display: flex; align-items: center; gap: 2px;
+  background: none; border: none;
+  color: var(--green); font-family: inherit; font-size: 16px; font-weight: 500;
+  cursor: pointer; padding: 4px 0; line-height: 1;
+  transition: opacity .15s;
+}
+.back-btn:hover { opacity: .65; }
+.back-chevron { font-size: 22px; font-weight: 300; line-height: 1; margin: 0; padding: 0; }
+
+/* Add button */
+.add-btn {
+  background: var(--green); color: #fff; border: none;
+  border-radius: 9px; padding: 7px 14px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.add-btn:hover { opacity: .85; }
+
+/* ═══════════════════════════════════════════════
+   SCROLL AREA
+═══════════════════════════════════════════════ */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-inner {
+  padding: 18px 28px 92px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════
+   WELCOME BANNER
+═══════════════════════════════════════════════ */
+.welcome {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.w-name { font-size: 21px; font-weight: 800; letter-spacing: -.03em; }
+.w-name span { color: var(--green); }
+.w-sub  { font-size: 13px; color: var(--text2); margin-top: 3px; font-weight: 400; }
+.w-emoji { font-size: 30px; opacity: .85; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.stat-card.sc-full { grid-column: span 2; }
+@media (min-width: 700px) {
+  .stats-grid { grid-template-columns: repeat(5,1fr); }
+  .stat-card.sc-full { grid-column: span 1; }
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  user-select: none;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  border: .5px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card:hover  { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-card:active { transform: scale(.96); }
+
+.sc-icon {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.sc-val   { font-size: 38px; font-weight: 800; letter-spacing: -.05em; line-height: 1; }
+.sc-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: 5px; }
+.sc-hint  { font-size: 10px; color: var(--muted); margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
+
+/* colour themes for stat cards */
+.sc-blue   .sc-icon { background: var(--blue-l); }  .sc-blue   .sc-val { color: var(--blue); }
+.sc-green  .sc-icon { background: var(--green-l); } .sc-green  .sc-val { color: var(--green); }
+.sc-brown  .sc-icon { background: var(--brown-l); } .sc-brown  .sc-val { color: var(--brown); }
+.sc-red    .sc-icon { background: var(--red-l); }   .sc-red    .sc-val { color: var(--red); }
+.sc-teal   .sc-icon { background: var(--teal-l); }  .sc-teal   .sc-val { color: var(--teal); font-size: 13px; line-height: 1.55; font-family: 'DM Mono', monospace; font-weight: 700; letter-spacing: 0; }
+
+/* ═══════════════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════════════ */
+.sec-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 22px 4px 8px;
+}
+.sec-hdr:first-of-type { margin-top: 0; }
+.sec-lbl { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; }
+.sec-act { font-size: 13px; font-weight: 500; color: var(--green); cursor: pointer; }
+.sec-act:hover { opacity: .75; }
+
+/* ═══════════════════════════════════════════════
+   GROUPED LIST
+═══════════════════════════════════════════════ */
+.grouped-list {
+  background: var(--surface);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: .5px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.g-row {
+  display: flex; align-items: center;
+  padding: 12px 14px; gap: 12px;
+  cursor: pointer;
+  transition: background .12s;
+  position: relative;
+}
+.g-row:active { background: var(--bg2); }
+.g-row + .g-row::before {
+  content: ''; position: absolute;
+  top: 0; left: 58px; right: 0;
+  height: .5px; background: var(--sep);
+}
+
+.row-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.ri-blue   { background: var(--blue-l); }
+.ri-green  { background: var(--green-l); }
+.ri-brown  { background: var(--brown-l); }
+.ri-red    { background: var(--red-l); }
+.ri-purple { background: var(--purple-l); }
+
+.row-body  { flex: 1; min-width: 0; }
+.row-name  { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-meta  { font-size: 12px; color: var(--text2); margin-top: 1px; }
+.row-end   { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.row-qty   { font-size: 16px; font-weight: 700; min-width: 28px; text-align: right; }
+.chevron   { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+/* Status pills */
+.pill { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 100px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.p-ok   { background: var(--green-l); color: var(--green); }
+.p-warn { background: var(--warn-l);  color: var(--warn); }
+.p-low  { background: var(--red-l);   color: var(--red); }
+
+/* ═══════════════════════════════════════════════
+   LIST VIEW — LARGE TITLE + ACTIONS
+═══════════════════════════════════════════════ */
+.large-title       { font-size: 34px; font-weight: 800; letter-spacing: -.05em; line-height: 1; }
+.large-title-sub   { font-size: 14px; color: var(--text2); margin-top: 4px; font-weight: 400; margin-bottom: 18px; }
+
+.act-row { display: flex; gap: 6px; flex-shrink: 0; }
+.act-btn {
+  padding: 5px 9px; border-radius: 8px; font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: inherit; border: none; transition: opacity .15s;
+  white-space: nowrap;
+}
+.act-btn:hover { opacity: .75; }
+.a-upd { background: var(--blue-l);   color: var(--blue); }
+.a-edt { background: var(--purple-l); color: var(--purple); }
+.a-del { background: var(--red-l);    color: var(--red); }
+
+/* ═══════════════════════════════════════════════
+   BOTTOM TAB BAR (fixed, outside .app-frame)
+═══════════════════════════════════════════════ */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 78px;
+  background: var(--blur-nav);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  border-top: .5px solid var(--sep);
+  display: flex;
+  padding: 8px 0 18px;
+  z-index: 600;
+}
+
+.t-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  border: none; background: none; cursor: pointer;
+  color: var(--text2); font-family: inherit;
+  transition: color .18s;
+}
+.t-item.active { color: var(--green); }
+
+.t-icon-wrap { position: relative; width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; }
+.t-icon { font-size: 22px; line-height: 1; transition: transform .22s cubic-bezier(.34,1.56,.64,1); }
+.t-item.active .t-icon { transform: scale(1.22); }
+
+/* List content swap animation */
+.list-content {
+  animation: listSlideIn .32s cubic-bezier(.32,.72,0,1);
+}
+@keyframes listSlideIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.t-badge {
+  position: absolute; top: -3px; right: -5px;
+  background: var(--red); color: #fff;
+  font-size: 9px; font-weight: 700; min-width: 15px; height: 15px;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  padding: 0 3px; border: 2px solid var(--bg);
+}
+.t-label { font-size: 10px; font-weight: 500; letter-spacing: .01em; }
+
+/* ═══════════════════════════════════════════════
+   TRANSITION OVERLAY (dimming the dash behind)
+═══════════════════════════════════════════════ */
+.v-dash::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .44s cubic-bezier(.32,.72,0,1);
+  z-index: 5;
+}
+.app-frame.show-list .v-dash::after { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ───────── PREVIEW NOTICE ───────── -->
+<div class="pv-banner">
+  👁 Önizleme — <span>Bu dosya sadece görsel demo, henüz uygulanmadı</span>
+  <button class="pv-theme-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+</div>
+
+<!-- ───────── APP FRAME ───────── -->
+<div class="app-frame" id="app-frame">
+
+  <!-- ════════ DASHBOARD VIEW ════════ -->
+  <div class="view v-dash">
+    <div class="topbar">
+      <div class="tb-left">
+        <div class="mark">S</div>
+        <div class="logo">Stock<span>Base</span></div>
+        <div class="sync-pill">
+          <div class="sdot"></div>
+          <span>live</span>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="user-chip">
+          <div class="uavatar">A</div>
+          <span class="uname">Ahmet</span>
+          <span class="rbadge badge-manager">MANAGER</span>
+        </div>
+        <div class="icon-btn" id="theme-icon-dash" onclick="toggleTheme()">🌙</div>
+      </div>
+    </div>
+
+    <div class="scroll-area"><div class="scroll-inner">
+
+      <!-- Welcome -->
+      <div class="welcome">
+        <div>
+          <div class="w-name">Welcome back, <span>Ahmet</span> 👋</div>
+          <div class="w-sub">Here's your inventory overview.</div>
+        </div>
+        <div class="w-emoji">🏭</div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card sc-blue"  onclick="goToList('products')">
+          <div class="sc-icon">🗃️</div>
+          <div class="sc-val" id="s-prod">6</div>
+          <div class="sc-label">Finished Products</div>
+          <div class="sc-hint">tap to manage →</div>
+        </div>
+        <div class="stat-card sc-green" onclick="goToList('materials')">
+          <div class="sc-icon">🌿</div>
+          <div class="sc-val" id="s-mat">5</div>
+          <div class="sc-label">Raw Materials</div>
+          <div class="sc-hint">tap to manage →</div>
+        </div>
+        <div class="stat-card sc-brown" onclick="goToList('othermaterials')">
+          <div class="sc-icon">📦</div>
+          <div class="sc-val" id="s-other">4</div>
+          <div class="sc-label">Other Materials</div>
+          <div class="sc-hint">tap to manage →</div>
+        </div>
+        <div class="stat-card sc-red"   onclick="goToList('lowstock')">
+          <div class="sc-icon">⚠️</div>
+          <div class="sc-val" id="s-low">3</div>
+          <div class="sc-label">Low Stock</div>
+          <div class="sc-hint">tap to see →</div>
+        </div>
+        <div class="stat-card sc-teal sc-full" onclick="goToList('history')" style="cursor:pointer">
+          <div class="sc-icon">🕒</div>
+          <div class="sc-val" id="s-time">—</div>
+          <div class="sc-label">Last Update</div>
+          <div class="sc-hint" id="s-by">—</div>
+        </div>
+      </div>
+
+      <!-- Top Inventory -->
+      <div class="sec-hdr">
+        <span class="sec-lbl">📦 Top Inventory</span>
+        <span class="sec-act" onclick="goToList('products')">See all →</span>
+      </div>
+      <div class="grouped-list" id="top-inventory"></div>
+
+      <!-- Low Stock -->
+      <div class="sec-hdr">
+        <span class="sec-lbl">⚠️ Low Stock</span>
+        <span class="sec-act" onclick="goToList('lowstock')">See all →</span>
+      </div>
+      <div class="grouped-list" id="low-stock-list"></div>
+
+      <!-- Movement History -->
+      <div class="sec-hdr">
+        <span class="sec-lbl">📋 Recent Activity</span>
+        <span class="sec-act" onclick="goToList('history')">See all →</span>
+      </div>
+      <div class="grouped-list" id="dash-history-list"></div>
+
+    </div>
+    </div></div><!-- end v-dash -->
+
+  <!-- ════════ LIST VIEW ════════ -->
+  <div class="view v-list">
+    <div class="topbar">
+      <div class="tb-left">
+        <button class="back-btn" onclick="goBack()">
+          <span class="back-chevron">‹</span>
+          <span>Dashboard</span>
+        </button>
+      </div>
+      <div class="tb-center" id="list-topbar-name"></div>
+      <div class="tb-right">
+        <button class="add-btn">+ Add</button>
+      </div>
+    </div>
+
+    <div class="scroll-area"><div class="scroll-inner" id="list-content-wrap" class="list-content">
+      <div class="large-title" id="list-title"></div>
+      <div class="large-title-sub" id="list-sub"></div>
+      <div class="grouped-list" id="list-items"></div>
+    </div></div>
+  </div><!-- end v-list -->
+
+</div><!-- end app-frame -->
+
+<!-- ───────── BOTTOM TAB BAR ───────── -->
+<div class="tab-bar">
+  <button class="t-item active" id="tab-products" onclick="goToList('products')">
+    <div class="t-icon-wrap"><span class="t-icon">🗃️</span></div>
+    <span class="t-label">Products</span>
+  </button>
+  <button class="t-item" id="tab-materials" onclick="goToList('materials')">
+    <div class="t-icon-wrap"><span class="t-icon">🌿</span></div>
+    <span class="t-label">Materials</span>
+  </button>
+  <button class="t-item" id="tab-othermaterials" onclick="goToList('othermaterials')">
+    <div class="t-icon-wrap"><span class="t-icon">📦</span></div>
+    <span class="t-label">Other</span>
+  </button>
+  <button class="t-item" id="tab-history" onclick="goToList('history')">
+    <div class="t-icon-wrap">
+      <span class="t-icon">📋</span>
+      <span class="t-badge">3</span>
+    </div>
+    <span class="t-label">History</span>
+  </button>
+  <button class="t-item" id="tab-logout" onclick="showLogoutConfirm()">
+    <div class="t-icon-wrap"><span class="t-icon">🚪</span></div>
+    <span class="t-label">Log out</span>
+  </button>
+</div>
+
+<!-- ───────── LOGOUT CONFIRM ───────── -->
+<div class="confirm-overlay" id="logout-overlay">
+  <div class="confirm-dialog">
+    <div class="cd-icon">🚪</div>
+    <div class="cd-title">Log Out?</div>
+    <div class="cd-desc">Are you sure you want to log out of StockBase?</div>
+    <div class="cd-btns">
+      <button class="cd-cancel" onclick="hideLogoutConfirm()">Cancel</button>
+      <button class="cd-confirm" onclick="doLogout()">Log Out</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ SAMPLE DATA ═══ */
+const DATA = {
+  products: [
+    { name:'Whey Protein 1kg',   cat:'Protein',     qty:48,  unit:'boxes',   min:10 },
+    { name:'BCAA 500g',          cat:'Amino Acid',  qty:31,  unit:'boxes',   min:5  },
+    { name:'Creatine 300g',      cat:'Performance', qty:67,  unit:'boxes',   min:15 },
+    { name:'Pre-Workout Mix',    cat:'Performance', qty:22,  unit:'boxes',   min:20 },
+    { name:'Casein Protein 1kg', cat:'Protein',     qty:14,  unit:'boxes',   min:8  },
+    { name:'Omega-3 Caps',       cat:'Supplement',  qty:9,   unit:'bottles', min:10 },
+  ],
+  materials: [
+    { name:'Whey Isolate Raw',  cat:'Ingredient', qty:120, unit:'kg', min:20 },
+    { name:'Creatine Powder',   cat:'Ingredient', qty:85,  unit:'kg', min:15 },
+    { name:'BCAA Raw Blend',    cat:'Ingredient', qty:43,  unit:'kg', min:30 },
+    { name:'Vanilla Flavour',   cat:'Flavouring', qty:12,  unit:'kg', min:5  },
+    { name:'Sucralose',         cat:'Sweetener',  qty:8,   unit:'kg', min:10 },
+  ],
+  othermaterials: [
+    { name:'Box A4 Standard',      cat:'Packaging', qty:320, unit:'pcs',   min:100 },
+    { name:'Label Sheet 100×50',   cat:'Label',     qty:7,   unit:'pcs',   min:50  },
+    { name:'Seal Bag 1L',          cat:'Packaging', qty:550, unit:'pcs',   min:200 },
+    { name:'Heat Shrink Film',     cat:'Packaging', qty:40,  unit:'rolls', min:20  },
+  ],
+  history: [
+    { text:'Added "Whey Protein 1kg" — qty: 0 → 48 boxes', action:'add',    time:'2026-03-31 14:22', user:'Ahmet' },
+    { text:'Updated "Sucralose" — qty: 15 → 8 kg',          action:'update', time:'2026-03-31 11:07', user:'Mehmet' },
+    { text:'Deleted "Old Batch"',                            action:'delete', time:'2026-03-30 17:45', user:'Ahmet' },
+  ],
+};
+
+const TYPE_COLOR = { products:'blue', materials:'green', othermaterials:'brown' };
+const TYPE_ICON  = { products:'🗃️', materials:'🌿', othermaterials:'📦' };
+const TYPE_NAME  = { products:'Finished Products', materials:'Raw Materials', othermaterials:'Other Materials' };
+
+/* ═══ HELPERS ═══ */
+function status(item) {
+  if (item.qty <= item.min)         return { pill:'p-low',  label:'⚠ Low',     qc:'var(--red)'   };
+  if (item.qty <= item.min * 1.5)   return { pill:'p-warn', label:'~ Warning',  qc:'var(--warn)'  };
+  return                                   { pill:'p-ok',   label:'✓ OK',       qc:null           };
+}
+
+function allItems() {
+  return [
+    ...DATA.products.map(i=>({...i,type:'products'})),
+    ...DATA.materials.map(i=>({...i,type:'materials'})),
+    ...DATA.othermaterials.map(i=>({...i,type:'othermaterials'})),
+  ];
+}
+
+function rowHtml(item, showActions=false) {
+  const c = TYPE_COLOR[item.type] || 'blue';
+  const icon = TYPE_ICON[item.type] || '📦';
+  const s = status(item);
+  const qColor = s.qc || `var(--${c})`;
+  const actions = showActions
+    ? `<div class="act-row">
+         <button class="act-btn a-upd">Update</button>
+         <button class="act-btn a-edt">Edit</button>
+         <button class="act-btn a-del">Delete</button>
+       </div>`
+    : '';
+  return `<div class="g-row">
+    <div class="row-icon ri-${c}">${icon}</div>
+    <div class="row-body">
+      <div class="row-name">${item.name}</div>
+      <div class="row-meta">${item.cat} · min: ${item.min} ${item.unit}</div>
+    </div>
+    <div class="row-end">
+      <span class="row-qty" style="color:${qColor}">${item.qty}</span>
+      <span class="pill ${s.pill}">${s.label}</span>
+      ${actions}
+      <span class="chevron">›</span>
+    </div>
+  </div>`;
+}
+
+/* ═══ RENDER DASHBOARD ═══ */
+function renderDashboard() {
+  const low = allItems().filter(i => i.qty <= i.min);
+  document.getElementById('s-prod').textContent  = DATA.products.length;
+  document.getElementById('s-mat').textContent   = DATA.materials.length;
+  document.getElementById('s-other').textContent = DATA.othermaterials.length;
+  document.getElementById('s-low').textContent   = low.length;
+
+  // Last update from history
+  const last = DATA.history[0];
+  if (last) {
+    document.getElementById('s-time').textContent = last.time;
+    document.getElementById('s-by').textContent   = 'by ' + last.user;
+  }
+
+  // Top 5 by qty
+  const top5 = allItems().sort((a,b)=>b.qty-a.qty).slice(0,5);
+  document.getElementById('top-inventory').innerHTML = top5.map(i=>rowHtml(i,false)).join('');
+
+  // Low stock (max 3)
+  const low3 = low.slice(0,3);
+  document.getElementById('low-stock-list').innerHTML = low3.length
+    ? low3.map(i=>`<div class="g-row">
+        <div class="row-icon ri-red">⚠️</div>
+        <div class="row-body">
+          <div class="row-name">${i.name}</div>
+          <div class="row-meta">${i.cat} · ${i.qty}/${i.min} ${i.unit}</div>
+        </div>
+        <div class="row-end">
+          <span class="pill p-low">⚠ Low</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>`).join('')
+    : '<div style="padding:16px;text-align:center;color:var(--text2);font-size:13px;font-weight:500">✓ All items well stocked</div>';
+
+  // Recent history (max 3)
+  const dotColor = { add:'var(--green)', update:'var(--blue)', delete:'var(--red)' };
+  const dotBg    = { add:'var(--green-l)', update:'var(--blue-l)', delete:'var(--red-l)' };
+  const dotIcon  = { add:'➕', update:'✏️', delete:'🗑️' };
+  document.getElementById('dash-history-list').innerHTML = DATA.history.slice(0,3).map(h=>`
+    <div class="g-row" style="cursor:pointer" onclick="goToList('history')">
+      <div class="row-icon" style="background:${dotBg[h.action] || 'var(--blue-l)'}">${dotIcon[h.action] || '·'}</div>
+      <div class="row-body">
+        <div class="row-name" style="font-size:13px;white-space:normal;line-height:1.4">${h.text}</div>
+        <div class="row-meta">${h.time} — by ${h.user}</div>
+      </div>
+      <span class="chevron">›</span>
+    </div>`).join('');
+}
+
+/* ═══ RENDER LIST ═══ */
+function renderList(type) {
+  if (type === 'lowstock') {
+    const low = allItems().filter(i => i.qty <= i.min);
+    document.getElementById('list-topbar-name').textContent = 'Low Stock';
+    document.getElementById('list-title').textContent = 'Low Stock';
+    document.getElementById('list-sub').textContent   = low.length + ' items need restocking';
+    document.getElementById('list-items').innerHTML   = low.map(i=>rowHtml(i,true)).join('');
+    return;
+  }
+  if (type === 'history') {
+    document.getElementById('list-topbar-name').textContent = 'History';
+    document.getElementById('list-title').textContent = 'Movement History';
+    document.getElementById('list-sub').textContent   = DATA.history.length + ' records';
+    const dotColor = { add:'var(--green)', update:'var(--blue)', delete:'var(--red)' };
+    document.getElementById('list-items').innerHTML = DATA.history.map(h=>`
+      <div class="g-row" style="cursor:default">
+        <div style="width:34px;height:34px;border-radius:9px;background:${dotColor[h.action] || 'var(--blue-l)'};opacity:.18;flex-shrink:0"></div>
+        <div style="position:absolute;left:26px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:${dotColor[h.action]};flex-shrink:0"></div>
+        <div class="row-body" style="margin-left:4px">
+          <div class="row-name" style="font-size:13px;white-space:normal">${h.text}</div>
+          <div class="row-meta">${h.time} — by ${h.user}</div>
+        </div>
+      </div>`).join('');
+    return;
+  }
+  const items = DATA[type];
+  const name  = TYPE_NAME[type];
+  document.getElementById('list-topbar-name').textContent = name;
+  document.getElementById('list-title').textContent = name;
+  document.getElementById('list-sub').textContent   = items.length + ' items tracked';
+  document.getElementById('list-items').innerHTML   = items.map(i=>rowHtml({...i,type},true)).join('');
+}
+
+/* ═══ NAVIGATION ═══ */
+let currentList = 'products';
+
+function goToList(type) {
+  const frame = document.getElementById('app-frame');
+  const alreadyInList = frame.classList.contains('show-list');
+
+  currentList = type;
+  renderList(type);
+
+  if (alreadyInList) {
+    // already in list view — animate content swap only
+    const wrap = document.getElementById('list-content-wrap');
+    wrap.classList.remove('list-content');
+    void wrap.offsetWidth; // reflow
+    wrap.classList.add('list-content');
+    wrap.scrollTop = 0;
+  } else {
+    frame.classList.add('show-list');
+    document.getElementById('list-content-wrap').scrollTop = 0;
+  }
+
+  // sync tab bar
+  document.querySelectorAll('.t-item').forEach(t=>t.classList.remove('active'));
+  const tb = document.getElementById('tab-' + type);
+  if (tb) tb.classList.add('active');
+}
+
+function goBack() {
+  document.getElementById('app-frame').classList.remove('show-list');
+  document.querySelectorAll('.t-item').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-products').classList.add('active');
+}
+
+/* ═══ THEME ═══ */
+function toggleTheme() {
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+  const icon = isDark ? '🌙' : '☀️';
+  document.querySelectorAll('.icon-btn').forEach(btn => { btn.textContent = icon; });
+  document.querySelectorAll('.t-badge').forEach(b => b.style.borderColor = isDark ? '#000' : '#f2f2f7');
+}
+
+/* ═══ LOGOUT ═══ */
+function showLogoutConfirm() {
+  document.getElementById('logout-overlay').classList.add('open');
+}
+function hideLogoutConfirm() {
+  document.getElementById('logout-overlay').classList.remove('open');
+}
+function doLogout() {
+  hideLogoutConfirm();
+  // In preview: just show a toast-like flash
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--surface);border:.5px solid var(--sep);border-radius:100px;padding:10px 20px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);z-index:9999;animation:dialogPop .25s ease';
+  d.textContent = '✓ Logged out (preview only)';
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2200);
+}
+
+/* ═══ INIT ═══ */
+renderDashboard();
+</script>
+</body>
+</html>

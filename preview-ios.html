@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>StockBase — iOS Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f2f2f7;
+  --bg2: #e5e5ea;
+  --surface: rgba(255,255,255,0.75);
+  --surface-solid: #ffffff;
+  --surface2: rgba(242,242,247,0.8);
+  --border: rgba(60,60,67,0.12);
+  --green: #34c759;
+  --green-l: rgba(52,199,89,0.15);
+  --blue: #007aff;
+  --blue-l: rgba(0,122,255,0.12);
+  --red: #ff3b30;
+  --red-l: rgba(255,59,48,0.12);
+  --orange: #ff9500;
+  --orange-l: rgba(255,149,0,0.12);
+  --teal: #5ac8fa;
+  --teal-l: rgba(90,200,250,0.12);
+  --text: #000000;
+  --text2: rgba(60,60,67,0.6);
+  --muted: rgba(60,60,67,0.3);
+  --separator: rgba(60,60,67,0.12);
+  --blur-bg: rgba(255,255,255,0.72);
+  --shadow: 0 1px 0 rgba(0,0,0,.08);
+  --shadow-card: 0 2px 12px rgba(0,0,0,.08), 0 0 0 0.5px rgba(0,0,0,.04);
+}
+html[data-theme="dark"] {
+  --bg: #000000;
+  --bg2: #1c1c1e;
+  --surface: rgba(28,28,30,0.75);
+  --surface-solid: #1c1c1e;
+  --surface2: rgba(44,44,46,0.8);
+  --border: rgba(255,255,255,0.1);
+  --green: #30d158;
+  --blue: #0a84ff;
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  --teal: #64d2ff;
+  --text: #ffffff;
+  --text2: rgba(235,235,245,0.6);
+  --muted: rgba(235,235,245,0.3);
+  --separator: rgba(255,255,255,0.1);
+  --blur-bg: rgba(28,28,30,0.85);
+  --shadow-card: 0 2px 12px rgba(0,0,0,.4), 0 0 0 0.5px rgba(255,255,255,.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scrollbar-gutter: stable; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'SF Pro Display', 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background .3s, color .3s;
+}
+
+/* ─── TOP BANNER ─── */
+.preview-banner {
+  background: var(--blue);
+  color: #fff;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+.preview-banner span { opacity: .8; font-weight: 400; }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  height: 56px;
+  background: var(--blur-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--separator);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 37px;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.mark { width: 32px; height: 32px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #fff; }
+.logo { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+.logo span { color: var(--green); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.sync-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text2);
+  padding: 4px 10px;
+  background: var(--surface2);
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+}
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+.icon-btn {
+  width: 32px; height: 32px; background: var(--surface2); border: none;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; backdrop-filter: blur(8px); color: var(--text2);
+  transition: all .15s;
+}
+.icon-btn:hover { background: var(--bg2); }
+
+/* ─── MAIN ─── */
+.main { padding: 20px 16px 120px; max-width: 680px; margin: 0 auto; }
+
+/* ─── LARGE TITLE ─── */
+.large-title-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+.large-title { font-size: 34px; font-weight: 800; letter-spacing: -.04em; color: var(--text); line-height: 1; }
+.large-title-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+/* ─── STATS GRID ─── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--surface);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  border: 0.5px solid var(--border);
+  transition: transform .15s;
+  cursor: default;
+}
+.stat-card:active { transform: scale(.97); }
+.stat-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+.stat-val { font-size: 32px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 500; }
+.c-green { color: var(--green); } .c-blue { color: var(--blue); }
+.c-orange { color: var(--orange); } .c-red { color: var(--red); }
+
+/* ─── SECTION HEADER ─── */
+.section-header { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin: 24px 4px 8px; }
+
+/* ─── GROUPED LIST (iOS Settings style) ─── */
+.grouped-list {
+  background: var(--surface);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 0.5px solid var(--border);
+}
+.list-row {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  gap: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.list-row:active { background: var(--bg2); }
+.list-row + .list-row::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 56px; right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+.row-icon-wrap {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.ri-green { background: var(--green); }
+.ri-blue { background: var(--blue); }
+.ri-orange { background: var(--orange); }
+.ri-red { background: var(--red); }
+.ri-teal { background: var(--teal); }
+.row-content { flex: 1; min-width: 0; }
+.row-name { font-size: 15px; font-weight: 500; }
+.row-meta { font-size: 13px; color: var(--text2); margin-top: 1px; }
+.row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.row-val { font-size: 16px; font-weight: 700; }
+.pill {
+  padding: 3px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pill-ok { background: var(--green-l); color: var(--green); }
+.pill-warn { background: var(--orange-l); color: var(--orange); }
+.pill-low { background: var(--red-l); color: var(--red); }
+.chevron { font-size: 12px; color: var(--muted); }
+
+/* ─── TAB BAR ─── */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 82px;
+  background: var(--blur-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+  display: flex;
+  padding: 0 0 20px;
+  z-index: 200;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  background: none;
+  color: var(--text2);
+  font-family: inherit;
+  transition: color .15s;
+  padding-top: 8px;
+}
+.tab-item.active { color: var(--blue); }
+.tab-icon-wrap { position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+.tab-icon { font-size: 22px; line-height: 1; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+.tab-item.active .tab-icon { transform: scale(1.15); }
+.tab-badge {
+  position: absolute;
+  top: -3px; right: -5px;
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--bg);
+}
+.tab-label { font-size: 10px; font-weight: 500; letter-spacing: .01em; }
+
+/* ─── BOTTOM SHEET MODAL ─── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(6px);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+}
+.bottom-sheet {
+  width: 100%;
+  background: var(--surface-solid);
+  border-radius: 20px 20px 0 0;
+  padding: 0 16px 34px;
+  box-shadow: 0 -4px 40px rgba(0,0,0,.15);
+  animation: slideUp .35s cubic-bezier(.32,0,.67,0);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.drag-handle {
+  width: 36px; height: 5px;
+  background: var(--muted);
+  border-radius: 3px;
+  margin: 12px auto 20px;
+}
+.sheet-title { font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 20px; }
+.f-row { margin-bottom: 14px; }
+.f-row label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+.ios-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 0.5px solid var(--separator);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+  outline: none;
+}
+.ios-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,.15); }
+.sheet-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-cancel-ios {
+  flex: 1; padding: 14px;
+  background: var(--bg2); border: none; border-radius: 14px;
+  color: var(--text); font-family: inherit; font-size: 15px; font-weight: 600;
+  cursor: pointer;
+}
+.btn-save-ios {
+  flex: 2; padding: 14px;
+  background: var(--blue); border: none; border-radius: 14px;
+  color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
+
+/* ─── DEMO TOGGLE ─── */
+.demo-controls {
+  display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.demo-btn {
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--blue);
+  background: var(--blue-l);
+  color: var(--blue);
+  font-family: inherit;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.demo-btn:hover, .demo-btn.active { background: var(--blue); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  👁 iOS Önizleme — <span>Bu dosya sadece görsel demo içindir, uygulanmadı</span>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="mark">S</div>
+    <div class="logo">Stock<span>Base</span></div>
+    <div class="sync-pill">
+      <div class="sync-dot"></div>
+      <span>live</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="theme-btn" onclick="toggleDark()" title="Dark/Light">🌙</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LARGE TITLE -->
+  <div class="large-title-row">
+    <div>
+      <div class="large-title">Products</div>
+      <div class="large-title-sub">12 items tracked</div>
+    </div>
+  </div>
+
+  <!-- DEMO CONTROLS -->
+  <div class="demo-controls">
+    <button class="demo-btn active" onclick="showSheet()">➕ Show Add Modal</button>
+    <button class="demo-btn" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme==='dark'?'light':'dark'; this.closest('.demo-controls').querySelectorAll('.demo-btn')[1].classList.toggle('active')">🌙 Toggle Dark</button>
+  </div>
+
+  <!-- STATS GRID (2-col iOS widget style) -->
+  <div style="font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Overview</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">🗃️</span>
+      <div class="stat-val c-blue">12</div>
+      <div class="stat-label">Finished Products</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🌿</span>
+      <div class="stat-val c-green">34</div>
+      <div class="stat-label">Raw Materials</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📦</span>
+      <div class="stat-val" style="color:var(--teal)">8</div>
+      <div class="stat-label">Other Materials</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⚠️</span>
+      <div class="stat-val c-red">3</div>
+      <div class="stat-label">Low Stock</div>
+    </div>
+  </div>
+
+  <!-- iOS GROUPED LIST -->
+  <div class="section-header">Inventory</div>
+  <div class="grouped-list">
+    <div class="list-row">
+      <div class="row-icon-wrap ri-blue">🗃️</div>
+      <div class="row-content">
+        <div class="row-name">Whey Protein 1kg</div>
+        <div class="row-meta">Protein · min: 10 boxes</div>
+      </div>
+      <div class="row-right">
+        <span class="row-val c-green">48</span>
+        <span class="pill pill-ok">✓ OK</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+    <div class="list-row">
+      <div class="row-icon-wrap ri-orange">🌿</div>
+      <div class="row-content">
+        <div class="row-name">Whey Isolate Raw</div>
+        <div class="row-meta">Ingredient · min: 20 kg</div>
+      </div>
+      <div class="row-right">
+        <span class="row-val" style="color:var(--orange)">22</span>
+        <span class="pill pill-warn">~ Warning</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+    <div class="list-row">
+      <div class="row-icon-wrap ri-red">📦</div>
+      <div class="row-content">
+        <div class="row-name">Packaging Box A4</div>
+        <div class="row-meta">Packaging · min: 100 pcs</div>
+      </div>
+      <div class="row-right">
+        <span class="row-val c-red">7</span>
+        <span class="pill pill-low">⚠ Low</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+    <div class="list-row">
+      <div class="row-icon-wrap ri-green">🗃️</div>
+      <div class="row-content">
+        <div class="row-name">BCAA 500g</div>
+        <div class="row-meta">Amino Acid · min: 5 boxes</div>
+      </div>
+      <div class="row-right">
+        <span class="row-val c-green">31</span>
+        <span class="pill pill-ok">✓ OK</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+    <div class="list-row">
+      <div class="row-icon-wrap ri-teal">🌿</div>
+      <div class="row-content">
+        <div class="row-name">Creatine Monohydrate</div>
+        <div class="row-meta">Ingredient · min: 15 kg</div>
+      </div>
+      <div class="row-right">
+        <span class="row-val c-green">67</span>
+        <span class="pill pill-ok">✓ OK</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:24px">Action Buttons Style</div>
+  <div class="grouped-list">
+    <div class="list-row" style="padding:14px 16px">
+      <div class="row-icon-wrap ri-blue" style="font-size:18px">✎</div>
+      <div class="row-content"><div class="row-name" style="color:var(--blue)">Edit Item</div></div>
+      <span class="chevron">›</span>
+    </div>
+    <div class="list-row" style="padding:14px 16px">
+      <div class="row-icon-wrap ri-green" style="font-size:18px">↑</div>
+      <div class="row-content"><div class="row-name" style="color:var(--green)">Update Stock</div></div>
+      <span class="chevron">›</span>
+    </div>
+    <div class="list-row" style="padding:14px 16px">
+      <div class="row-icon-wrap ri-red" style="font-size:18px">🗑</div>
+      <div class="row-content"><div class="row-name" style="color:var(--red)">Delete</div></div>
+      <span class="chevron">›</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM SHEET MODAL (hidden by default) -->
+<div class="overlay" id="overlay" style="display:none" onclick="hideSheet(event)">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="drag-handle"></div>
+    <div class="sheet-title">Add Product</div>
+    <div class="f-row">
+      <label>Item Name</label>
+      <input class="ios-input" type="text" placeholder="e.g. Whey Protein Box"/>
+    </div>
+    <div class="f-row">
+      <label>Category</label>
+      <input class="ios-input" type="text" placeholder="e.g. Protein, Packaging"/>
+    </div>
+    <div class="f-row">
+      <label>Quantity</label>
+      <input class="ios-input" type="number" placeholder="0"/>
+    </div>
+    <div class="f-row">
+      <label>Unit</label>
+      <input class="ios-input" type="text" placeholder="e.g. boxes, kg"/>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn-cancel-ios" onclick="hideSheet()">Cancel</button>
+      <button class="btn-save-ios">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <span class="tab-icon">🗃️</span>
+    </div>
+    <span class="tab-label">Products</span>
+  </button>
+  <button class="tab-item active" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <span class="tab-icon">🌿</span>
+    </div>
+    <span class="tab-label">Materials</span>
+  </button>
+  <button class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <span class="tab-icon">📦</span>
+    </div>
+    <span class="tab-label">Other</span>
+  </button>
+  <button class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <span class="tab-icon">📋</span>
+      <span class="tab-badge">3</span>
+    </div>
+    <span class="tab-label">History</span>
+  </button>
+  <button class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <span class="tab-icon">🚪</span>
+    </div>
+    <span class="tab-label">Log out</span>
+  </button>
+</div>
+
+<script>
+function showSheet() {
+  document.getElementById('overlay').style.display = 'flex';
+}
+function hideSheet(e) {
+  if (!e || e.target === document.getElementById('overlay')) {
+    document.getElementById('overlay').style.display = 'none';
+  }
+}
+function setTab(btn) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+}
+</script>
+</body>
+</html>

@@ -70,6 +70,7 @@ select:focus{border-color:var(--green);background:var(--surface)}
 .icon-btn{font-size:12px;color:var(--text2);background:var(--surface);border:1.5px solid var(--border);padding:7px 13px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .15s}
 .icon-btn:hover{border-color:var(--border2);color:var(--text)}
 .theme-btn{font-size:18px;padding:6px 10px;border-radius:8px}
+.lang-btn{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;letter-spacing:.5px;font-family:'DM Mono',monospace}
 /* MAIN */
 .main{padding:28px;max-width:1360px;margin:0 auto}
 /* STATS */
@@ -314,11 +315,11 @@ html[data-theme="dark"] .list-panel{background:#000}
 <div class="overlay" id="confirm-overlay">
   <div class="modal confirm-modal">
     <div class="confirm-icon" id="confirm-icon">🗑</div>
-    <div class="confirm-title" id="confirm-title">Delete Item?</div>
-    <div class="confirm-desc" id="confirm-desc">This action cannot be undone.</div>
+    <div class="confirm-title" id="confirm-title" data-i18n="deleteItem">Delete Item?</div>
+    <div class="confirm-desc" id="confirm-desc" data-i18n="cannotUndo">This action cannot be undone.</div>
     <div class="m-acts">
-      <button class="btn-cancel" id="confirm-cancel-btn">Cancel</button>
-      <button class="btn-danger-full" id="confirm-ok-btn">Delete</button>
+      <button class="btn-cancel" id="confirm-cancel-btn" data-i18n="cancel">Cancel</button>
+      <button class="btn-danger-full" id="confirm-ok-btn" data-i18n="deleteBtn">Delete</button>
     </div>
   </div>
 </div>
@@ -326,43 +327,43 @@ html[data-theme="dark"] .list-panel{background:#000}
 <!-- Item Modal -->
 <div class="overlay" id="item-overlay">
   <div class="modal">
-    <div class="modal-title" id="item-title">Add Item</div>
-    <div class="f-row"><label>Item Name</label><input type="text" id="i-name" placeholder="e.g. Whey Protein Box"/></div>
-    <div class="f-row"><label>Category</label><input type="text" id="i-cat" placeholder="e.g. Protein, Packaging"/></div>
-    <div class="f-row"><label>Quantity</label><input type="number" id="i-qty" placeholder="0" min="0"/></div>
-    <div class="f-row"><label>Unit</label><input type="text" id="i-unit" placeholder="e.g. boxes, kg, liters"/></div>
-    <div class="f-row"><label>Min Stock Threshold</label><input type="number" id="i-min" placeholder="e.g. 10" min="0"/></div>
+    <div class="modal-title" id="item-title" data-i18n="addItemTitle">Add Item</div>
+    <div class="f-row"><label data-i18n="itemName">Item Name</label><input type="text" id="i-name" placeholder="e.g. Whey Protein Box"/></div>
+    <div class="f-row"><label data-i18n="category">Category</label><input type="text" id="i-cat" placeholder="e.g. Protein, Packaging"/></div>
+    <div class="f-row"><label data-i18n="quantity">Quantity</label><input type="number" id="i-qty" placeholder="0" min="0"/></div>
+    <div class="f-row"><label data-i18n="unit">Unit</label><input type="text" id="i-unit" placeholder="e.g. boxes, kg, liters"/></div>
+    <div class="f-row"><label data-i18n="minStock">Min Stock Threshold</label><input type="number" id="i-min" placeholder="e.g. 10" min="0"/></div>
     <!-- Products: market + company -->
     <div class="f-row" id="f-market">
-      <label>Piyasa / Market</label>
+      <label data-i18n="market">Market</label>
       <div class="role-row" style="margin:0;grid-template-columns:1fr 1fr 1fr">
-        <button type="button" class="role-btn" id="mkt-yurtici" onclick="selItemMarket('yurtici',this)">Yurt İçi</button>
-        <button type="button" class="role-btn" id="mkt-yurtdisi" onclick="selItemMarket('yurtdisi',this)">Yurt Dışı</button>
-        <button type="button" class="role-btn" id="mkt-fabrika" onclick="selItemMarket('fabrika',this)">Fabrika</button>
+        <button type="button" class="role-btn" id="mkt-yurtici" onclick="selItemMarket('yurtici',this)" data-i18n="yurtici">Domestic</button>
+        <button type="button" class="role-btn" id="mkt-yurtdisi" onclick="selItemMarket('yurtdisi',this)" data-i18n="yurtdisi">Export</button>
+        <button type="button" class="role-btn" id="mkt-fabrika" onclick="selItemMarket('fabrika',this)" data-i18n="fabrika">Factory Stock</button>
       </div>
     </div>
-    <div class="f-row" id="f-company"><label>Firma / Company</label><input type="text" id="i-company" placeholder="Firma adı…"/></div>
+    <div class="f-row" id="f-company"><label data-i18n="company">Company</label><input type="text" id="i-company" data-i18n-ph="companyName" placeholder="Company name…"/></div>
     <!-- Materials: supplier -->
-    <div class="f-row" id="f-supplier"><label>Tedarikçi / Supplier</label><input type="text" id="i-supplier" placeholder="Tedarikçi adı…"/></div>
+    <div class="f-row" id="f-supplier"><label data-i18n="supplier">Supplier</label><input type="text" id="i-supplier" data-i18n-ph="supplierName" placeholder="Supplier name…"/></div>
     <!-- OtherMaterials: section + condition + measurements -->
     <div class="f-row" id="f-section">
-      <label>Bölüm / Section</label>
+      <label data-i18n="section">Section</label>
       <div class="role-row" style="margin:0">
-        <button type="button" class="role-btn" id="sec-koli" onclick="selItemSection('koli',this)">Koli</button>
-        <button type="button" class="role-btn" id="sec-poset" onclick="selItemSection('poset',this)">🛒 Poşet</button>
+        <button type="button" class="role-btn" id="sec-koli" onclick="selItemSection('koli',this)" data-i18n="koli">Box</button>
+        <button type="button" class="role-btn" id="sec-poset" onclick="selItemSection('poset',this)">🛒 <span data-i18n="poset">Bag</span></button>
       </div>
     </div>
     <div class="f-row" id="f-condition">
-      <label>Durum / Condition</label>
+      <label data-i18n="condition">Condition</label>
       <div class="role-row" style="margin:0">
-        <button type="button" class="role-btn" id="cond-yeni" onclick="selItemCondition('yeni',this)">Yeni</button>
-        <button type="button" class="role-btn" id="cond-eski" onclick="selItemCondition('eski',this)">Eski</button>
+        <button type="button" class="role-btn" id="cond-yeni" onclick="selItemCondition('yeni',this)" data-i18n="yeni">New</button>
+        <button type="button" class="role-btn" id="cond-eski" onclick="selItemCondition('eski',this)" data-i18n="eski">Old</button>
       </div>
     </div>
-    <div class="f-row" id="f-measurements"><label>Ölçüler / Measurements</label><input type="text" id="i-measurements" placeholder="örn. 30x40 cm"/></div>
+    <div class="f-row" id="f-measurements"><label data-i18n="measurements">Measurements</label><input type="text" id="i-measurements" data-i18n-ph="egMeasure" placeholder="e.g. 30x40 cm"/></div>
     <div class="m-acts">
-      <button class="btn-cancel" onclick="closeItemModal()">Cancel</button>
-      <button class="btn-save" id="item-save-btn" onclick="saveItem()">Save Item</button>
+      <button class="btn-cancel" onclick="closeItemModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn-save" id="item-save-btn" onclick="saveItem()" data-i18n="saveItem">Save Item</button>
     </div>
   </div>
 </div>
@@ -370,19 +371,19 @@ html[data-theme="dark"] .list-panel{background:#000}
 <!-- Update Modal -->
 <div class="overlay" id="upd-overlay">
   <div class="modal">
-    <div class="modal-title">Update Stock</div>
+    <div class="modal-title" data-i18n="updateStock">Update Stock</div>
     <div class="cur-stock" id="upd-cur"></div>
-    <div class="f-row"><label>Action</label>
+    <div class="f-row"><label data-i18n="action">Action</label>
       <select id="u-action">
-        <option value="set">Set exact quantity</option>
-        <option value="add">Add stock (receiving goods)</option>
-        <option value="sub">Remove stock (used / shipped)</option>
+        <option value="set" data-i18n="setExact">Set exact quantity</option>
+        <option value="add" data-i18n="addStockOpt">Add stock (receiving goods)</option>
+        <option value="sub" data-i18n="removeStockOpt">Remove stock (used / shipped)</option>
       </select>
     </div>
-    <div class="f-row" style="margin-top:12px"><label>Amount</label><input type="number" id="u-amount" placeholder="0" min="0"/></div>
+    <div class="f-row" style="margin-top:12px"><label data-i18n="amount">Amount</label><input type="number" id="u-amount" placeholder="0" min="0"/></div>
     <div class="m-acts">
-      <button class="btn-cancel" onclick="closeUpdModal()">Cancel</button>
-      <button class="btn-save" id="upd-save-btn" onclick="saveUpdate()">Update Stock</button>
+      <button class="btn-cancel" onclick="closeUpdModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn-save" id="upd-save-btn" onclick="saveUpdate()" data-i18n="updateStock">Update Stock</button>
     </div>
   </div>
 </div>
@@ -399,9 +400,9 @@ html[data-theme="dark"] .list-panel{background:#000}
       <button class="role-btn active" onclick="selRole('manager',this)">Manager</button>
       <button class="role-btn" onclick="selRole('employee',this)">Employee</button>
     </div>
-    <div class="f-row"><label>Username</label><input type="text" id="l-name" placeholder="e.g. Ismail" autocomplete="username"/></div>
-    <div class="f-row"><label>Pin Code</label><input type="password" id="l-pin" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <button class="btn-primary" onclick="doLogin()">Enter System</button>
+    <div class="f-row"><label data-i18n="username">Username</label><input type="text" id="l-name" placeholder="e.g. Ismail" autocomplete="username"/></div>
+    <div class="f-row"><label data-i18n="pinCode">Pin Code</label><input type="password" id="l-pin" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-primary" onclick="doLogin()" data-i18n="enterSystem">Enter System</button>
     <div class="login-error" id="l-err"></div>
   </div>
 </div>
@@ -410,11 +411,11 @@ html[data-theme="dark"] .list-panel{background:#000}
 <div class="logout-overlay" id="logout-overlay" onclick="if(event.target===this)closeLogoutOverlay()">
   <div class="logout-dialog">
     <div class="ld-icon">🚪</div>
-    <div class="ld-title">Log Out?</div>
-    <div class="ld-desc">You will need to enter your PIN again to access the system.</div>
+    <div class="ld-title" data-i18n="logOutQ">Log Out?</div>
+    <div class="ld-desc" data-i18n="logOutDesc">You will need to enter your PIN again to access the system.</div>
     <div class="ld-btns">
-      <button class="ld-cancel" onclick="closeLogoutOverlay()">Cancel</button>
-      <button class="ld-confirm" onclick="doLogout()">Log Out</button>
+      <button class="ld-cancel" onclick="closeLogoutOverlay()" data-i18n="cancel">Cancel</button>
+      <button class="ld-confirm" onclick="doLogout()" data-i18n="logOut">Log Out</button>
     </div>
   </div>
 </div>
@@ -437,8 +438,9 @@ html[data-theme="dark"] .list-panel{background:#000}
         <span class="rbadge" id="rbadge"></span>
       </div>
       <button class="icon-btn theme-btn" id="theme-toggle" title="Toggle theme">🌙</button>
+      <button class="icon-btn lang-btn" id="lang-toggle" onclick="setLang(lang==='en'?'tr':'en')" title="Language">EN</button>
       <button class="icon-btn sync-btn" onclick="loadAll()">↻<span class="sync-label"> Sync</span></button>
-      <button class="icon-btn logout-btn" onclick="confirmLogout()">Log out</button>
+      <button class="icon-btn logout-btn" onclick="confirmLogout()" data-i18n="logOut">Log out</button>
     </div>
   </div>
 
@@ -446,23 +448,23 @@ html[data-theme="dark"] .list-panel{background:#000}
   <nav class="mobile-nav">
     <button class="mnav-item active" id="mnav-products" onclick="openListPage('products')">
       <div class="mnav-icon-wrap"><span class="mnav-icon">🗃️</span></div>
-      <span class="mnav-label">Products</span>
+      <span class="mnav-label" data-i18n="finishedProducts">Products</span>
     </button>
     <button class="mnav-item" id="mnav-materials" onclick="openListPage('materials')">
       <div class="mnav-icon-wrap"><span class="mnav-icon">🌿</span></div>
-      <span class="mnav-label">Materials</span>
+      <span class="mnav-label" data-i18n="rawMaterials">Materials</span>
     </button>
     <button class="mnav-item" id="mnav-othermaterials" onclick="openListPage('othermaterials')">
       <div class="mnav-icon-wrap"><span class="mnav-icon">📦</span></div>
-      <span class="mnav-label">Other</span>
+      <span class="mnav-label" data-i18n="otherMaterials">Other</span>
     </button>
     <button class="mnav-item" id="mnav-history" onclick="openListPage('history')">
       <div class="mnav-icon-wrap"><span class="mnav-icon">📋</span></div>
-      <span class="mnav-label">History</span>
+      <span class="mnav-label" data-i18n="history">History</span>
     </button>
     <button class="mnav-item" onclick="confirmLogout()">
       <div class="mnav-icon-wrap"><span class="mnav-icon">🚪</span></div>
-      <span class="mnav-label">Log out</span>
+      <span class="mnav-label" data-i18n="logOut">Log out</span>
     </button>
   </nav>
 
@@ -471,8 +473,8 @@ html[data-theme="dark"] .list-panel{background:#000}
     <!-- Welcome Banner -->
     <div class="dw-banner">
       <div>
-        <div class="dw-title">Welcome back, <span id="dw-name">—</span> 👋</div>
-        <div class="dw-sub">Here's an overview of your inventory.</div>
+        <div class="dw-title"><span data-i18n="welcome">Welcome back,</span> <span id="dw-name">—</span> 👋</div>
+        <div class="dw-sub" data-i18n="overview">Here's an overview of your inventory.</div>
       </div>
       <div class="dw-icon">🏭</div>
     </div>
@@ -481,31 +483,31 @@ html[data-theme="dark"] .list-panel{background:#000}
     <div class="stats-row">
       <div class="stat-card" onclick="openListPage('products')">
         <div class="stat-icon si-blue">🗃️</div>
-        <div class="stat-label">Finished Products</div>
+        <div class="stat-label" data-i18n="finishedProducts">Finished Products</div>
         <div class="stat-val c-blue" id="s-prod">—</div>
-        <div class="stat-sub">items in stock</div>
+        <div class="stat-sub" data-i18n="inStock">items in stock</div>
       </div>
       <div class="stat-card" onclick="openListPage('materials')">
         <div class="stat-icon si-green">🌿</div>
-        <div class="stat-label">Raw Materials</div>
+        <div class="stat-label" data-i18n="rawMaterials">Raw Materials</div>
         <div class="stat-val c-green" id="s-mat">—</div>
-        <div class="stat-sub">items tracked</div>
+        <div class="stat-sub" data-i18n="tracked">items tracked</div>
       </div>
       <div class="stat-card" onclick="openListPage('othermaterials')">
         <div class="stat-icon si-brown">📦</div>
-        <div class="stat-label">Other Materials</div>
+        <div class="stat-label" data-i18n="otherMaterials">Other Materials</div>
         <div class="stat-val c-brown" id="s-other">—</div>
-        <div class="stat-sub">items tracked</div>
+        <div class="stat-sub" data-i18n="tracked">items tracked</div>
       </div>
       <div class="stat-card" onclick="openListPage('lowstock')">
         <div class="stat-icon si-red">⚠️</div>
-        <div class="stat-label">Low Stock</div>
+        <div class="stat-label" data-i18n="lowStock">Low Stock</div>
         <div class="stat-val c-red" id="s-low">—</div>
-        <div class="stat-sub">need restocking</div>
+        <div class="stat-sub" data-i18n="needRestock">need restocking</div>
       </div>
       <div class="stat-card stat-noclick">
         <div class="stat-icon si-teal">🕒</div>
-        <div class="stat-label">Last Update</div>
+        <div class="stat-label" data-i18n="lastUpdate">Last Update</div>
         <div class="stat-val c-teal" style="font-size:13px;line-height:1.6;margin-top:2px;font-family:'DM Mono',monospace" id="s-time">—</div>
         <div class="stat-sub" id="s-by"></div>
       </div>
@@ -517,27 +519,27 @@ html[data-theme="dark"] .list-panel{background:#000}
     <!-- Dashboard Nav Tiles -->
     <div class="dash-section" style="margin-top:22px">
       <div class="dash-section-hdr">
-        <span class="dash-section-lbl">Browse</span>
+        <span class="dash-section-lbl" data-i18n="browse">Browse</span>
       </div>
       <div class="dash-nav-grid">
         <div class="dash-nav-tile" onclick="openListPage('products')">
           <div class="dnt-icon si-blue">🗃️</div>
-          <div class="dnt-body"><div class="dnt-label">Finished Products</div><div class="dnt-sub" id="dnt-prod-sub">— items</div></div>
+          <div class="dnt-body"><div class="dnt-label" data-i18n="finishedProducts">Finished Products</div><div class="dnt-sub" id="dnt-prod-sub">— items</div></div>
           <div class="dnt-arrow">›</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('materials')">
           <div class="dnt-icon si-green">🌿</div>
-          <div class="dnt-body"><div class="dnt-label">Raw Materials</div><div class="dnt-sub" id="dnt-mat-sub">— items</div></div>
+          <div class="dnt-body"><div class="dnt-label" data-i18n="rawMaterials">Raw Materials</div><div class="dnt-sub" id="dnt-mat-sub">— items</div></div>
           <div class="dnt-arrow">›</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('othermaterials')">
           <div class="dnt-icon si-brown">📦</div>
-          <div class="dnt-body"><div class="dnt-label">Other Materials</div><div class="dnt-sub" id="dnt-other-sub">— items</div></div>
+          <div class="dnt-body"><div class="dnt-label" data-i18n="otherMaterials">Other Materials</div><div class="dnt-sub" id="dnt-other-sub">— items</div></div>
           <div class="dnt-arrow">›</div>
         </div>
         <div class="dash-nav-tile" onclick="openListPage('history')">
           <div class="dnt-icon si-teal">📋</div>
-          <div class="dnt-body"><div class="dnt-label">History</div><div class="dnt-sub" id="dnt-hist-sub">— entries</div></div>
+          <div class="dnt-body"><div class="dnt-label" data-i18n="history">History</div><div class="dnt-sub" id="dnt-hist-sub">— entries</div></div>
           <div class="dnt-arrow">›</div>
         </div>
       </div>
@@ -548,7 +550,7 @@ html[data-theme="dark"] .list-panel{background:#000}
   <!-- List Panel (slides in over dashboard) -->
   <div class="list-panel" id="list-panel">
     <div class="lp-topbar">
-      <button class="lp-back" onclick="closeListPage()">‹ Dashboard</button>
+      <button class="lp-back" onclick="closeListPage()" id="lp-back-dash">‹ Dashboard</button>
       <div class="lp-title" id="lp-title">Items</div>
       <button class="icon-btn" onclick="loadAll()" style="font-size:16px;padding:6px 10px" title="Refresh">↻</button>
     </div>
@@ -588,6 +590,125 @@ let products = [], materials = [], othermaterials = [], history = [];
 let editType = null, editId = null, updTarget = null;
 let editItemMarket = null, editItemSection = null, editItemCondition = null;
 
+// ─── i18n ────────────────────────────────────────────────
+let lang = localStorage.getItem('sb-lang') || 'en';
+const I18N = {
+  en: {
+    yurtici: 'Domestic', yurtdisi: 'Export', fabrika: 'Factory Stock',
+    markets: 'Markets', stockTypes: 'Stock Types', sections: 'Sections',
+    product: 'product', products_lc: 'products', types: 'types',
+    items: 'items', entries: 'entries',
+    yeni: 'New', eski: 'Old', koli: 'Box', poset: 'Bag',
+    noCompany: 'No Company', noCompanyFound: 'No company found',
+    noProductsYet: 'no products yet', noItemsYet: 'No items yet',
+    noResults: 'No results', noHistoryYet: 'No history yet',
+    noMarketInfo: 'products have no market info yet. Edit to update.',
+    noSectionInfo: 'items have no section info.',
+    allStocked: 'All items are sufficiently stocked',
+    searchMarket: 'Search market…', searchCompany: 'Search company…',
+    searchProduct: 'Search product…', searchSupplier: 'Search product or supplier…',
+    searchSection: 'Search section…', searchHistory: 'Search history…',
+    search: 'Search…', measurements: 'Measurements', size: 'Size',
+    addProduct: '+ Add Product', addMaterial: '+ Add Material', addItem: '+ Add Item',
+    clearHistory: 'Clear History',
+    welcome: 'Welcome back,', overview: "Here's an overview of your inventory.",
+    finishedProducts: 'Finished Products', rawMaterials: 'Raw Materials',
+    otherMaterials: 'Other Materials', lowStock: 'Low Stock', lastUpdate: 'Last Update',
+    inStock: 'items in stock', tracked: 'items tracked', needRestock: 'need restocking',
+    by: 'by', browse: 'Browse', history: 'History', recentActivity: 'Recent Activity',
+    seeAll: 'See all →', dashboard: 'Dashboard',
+    tabProducts: '🗃️ Products', tabMaterials: '🌿 Raw Materials', tabOther: '📦 Other',
+    tabLowStock: '⚠️ Low Stock', tabHistory: '📋 History',
+    market: 'Market', company: 'Company', supplier: 'Supplier', section: 'Section',
+    condition: 'Condition', companyName: 'Company name…', supplierName: 'Supplier name…',
+    egMeasure: 'e.g. 30x40 cm', addItemTitle: 'Add Item', editItemTitle: 'Edit Item',
+    itemName: 'Item Name', category: 'Category', quantity: 'Quantity',
+    unit: 'Unit', minStock: 'Min Stock Threshold', saveItem: 'Save Item',
+    cancel: 'Cancel', updateStock: 'Update Stock', currentStock: 'Current Stock',
+    setExact: 'Set exact quantity', addStockOpt: 'Add stock (receiving goods)',
+    removeStockOpt: 'Remove stock (used / shipped)', amount: 'Amount',
+    deleteItem: 'Delete Item?', cannotUndo: 'This action cannot be undone.',
+    deleteBtn: 'Delete', action: 'Action',
+    logOut: 'Log Out', logOutQ: 'Log Out?', logOutDesc: 'You will need to enter your PIN again to access the system.',
+    username: 'Username', pinCode: 'Pin Code', enterSystem: 'Enter System',
+    enterUsername: 'Please enter your username', unknownUser: 'Unknown username', wrongPin: 'Incorrect pin',
+    saving: 'Saving…', itemUpdated: 'Item updated', itemAdded: 'Item added', itemDeleted: 'Item deleted',
+    saveFailed: 'Save failed — check connection', updateFailed: 'Update failed', deleteFailed: 'Delete failed',
+    stockUpdated: 'Stock updated', connectionError: 'Connection error',
+    deleteItemQ: 'Delete Item?', permRemoved: 'will be permanently removed.',
+    clearHistoryQ: 'Clear History?', clearHistoryDesc: 'All movement history will be deleted permanently.',
+    clearAll: 'Clear All', historyCleared: 'History cleared', clearHistoryFailed: 'Failed to clear history',
+  },
+  tr: {
+    yurtici: 'Yurt İçi', yurtdisi: 'Yurt Dışı', fabrika: 'Fabrika Stoğu',
+    markets: 'Piyasalar', stockTypes: 'Stok Türleri', sections: 'Bölümler',
+    product: 'ürün', products_lc: 'ürün', types: 'çeşit',
+    items: 'öğe', entries: 'kayıt',
+    yeni: 'Yeni', eski: 'Eski', koli: 'Koli', poset: 'Poşet',
+    noCompany: 'Firma Yok', noCompanyFound: 'Firma bulunamadı',
+    noProductsYet: 'henüz ürün yok', noItemsYet: 'Henüz öğe yok',
+    noResults: 'Sonuç bulunamadı', noHistoryYet: 'Henüz geçmiş yok',
+    noMarketInfo: 'ürün henüz piyasa bilgisi içermiyor. Düzenleyerek güncelleyin.',
+    noSectionInfo: 'ürün bölüm bilgisi içermiyor.',
+    allStocked: 'Tüm ürünler yeterli stokta',
+    searchMarket: 'Piyasa ara…', searchCompany: 'Firma ara…',
+    searchProduct: 'Ürün ara…', searchSupplier: 'Ürün veya tedarikçi ara…',
+    searchSection: 'Bölüm ara…', searchHistory: 'Geçmiş ara…',
+    search: 'Ara…', measurements: 'Ölçüler', size: 'Ölçü',
+    addProduct: '+ Ürün Ekle', addMaterial: '+ Hammadde Ekle', addItem: '+ Öğe Ekle',
+    clearHistory: 'Geçmişi Temizle',
+    welcome: 'Tekrar hoş geldin,', overview: 'Envanter durumunuz.',
+    finishedProducts: 'Mamul Ürünler', rawMaterials: 'Hammaddeler',
+    otherMaterials: 'Diğer Malzemeler', lowStock: 'Düşük Stok', lastUpdate: 'Son Güncelleme',
+    inStock: 'stokta', tracked: 'takip edilen', needRestock: 'yeniden stoklanmalı',
+    by: '', browse: 'Gözat', history: 'Geçmiş', recentActivity: 'Son Aktivite',
+    seeAll: 'Tümünü gör →', dashboard: 'Panel',
+    tabProducts: '🗃️ Ürünler', tabMaterials: '🌿 Hammaddeler', tabOther: '📦 Diğer',
+    tabLowStock: '⚠️ Düşük Stok', tabHistory: '📋 Geçmiş',
+    market: 'Piyasa', company: 'Firma', supplier: 'Tedarikçi', section: 'Bölüm',
+    condition: 'Durum', companyName: 'Firma adı…', supplierName: 'Tedarikçi adı…',
+    egMeasure: 'örn. 30x40 cm', addItemTitle: 'Öğe Ekle', editItemTitle: 'Öğeyi Düzenle',
+    itemName: 'Öğe Adı', category: 'Kategori', quantity: 'Miktar',
+    unit: 'Birim', minStock: 'Minimum Stok Eşiği', saveItem: 'Kaydet',
+    cancel: 'İptal', updateStock: 'Stok Güncelle', currentStock: 'Mevcut Stok',
+    setExact: 'Tam miktar belirle', addStockOpt: 'Stok ekle (mal alım)',
+    removeStockOpt: 'Stok çıkar (kullanım / sevkiyat)', amount: 'Miktar',
+    deleteItem: 'Öğeyi Sil?', cannotUndo: 'Bu işlem geri alınamaz.',
+    deleteBtn: 'Sil', action: 'İşlem',
+    logOut: 'Çıkış Yap', logOutQ: 'Çıkış Yap?', logOutDesc: 'Sisteme tekrar erişmek için PIN girmeniz gerekecek.',
+    username: 'Kullanıcı Adı', pinCode: 'Pin Kodu', enterSystem: 'Giriş Yap',
+    enterUsername: 'Lütfen kullanıcı adınızı girin', unknownUser: 'Bilinmeyen kullanıcı', wrongPin: 'Yanlış pin',
+    saving: 'Kaydediliyor…', itemUpdated: 'Öğe güncellendi', itemAdded: 'Öğe eklendi', itemDeleted: 'Öğe silindi',
+    saveFailed: 'Kayıt başarısız — bağlantıyı kontrol edin', updateFailed: 'Güncelleme başarısız', deleteFailed: 'Silme başarısız',
+    stockUpdated: 'Stok güncellendi', connectionError: 'Bağlantı hatası',
+    deleteItemQ: 'Öğeyi Sil?', permRemoved: 'kalıcı olarak silinecek.',
+    clearHistoryQ: 'Geçmişi Temizle?', clearHistoryDesc: 'Tüm hareket geçmişi kalıcı olarak silinecek.',
+    clearAll: 'Tümünü Temizle', historyCleared: 'Geçmiş temizlendi', clearHistoryFailed: 'Geçmiş temizlenemedi',
+  }
+};
+function t(key) { return (I18N[lang] && I18N[lang][key]) || (I18N.en[key]) || key; }
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('sb-lang', l);
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = l === 'tr' ? 'TR' : 'EN';
+  // Translate all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  // Translate placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  // Tabs
+  const tabMap = {products:'tabProducts',materials:'tabMaterials',othermaterials:'tabOther',lowstock:'tabLowStock',history:'tabHistory'};
+  Object.entries(tabMap).forEach(([id,key])=>{ const e=document.getElementById('lpt-'+id); if(e) e.textContent=t(key); });
+  // Back button
+  const bb = document.getElementById('lp-back-dash'); if(bb) bb.textContent = '‹ '+t('dashboard');
+  render();
+  if (document.getElementById('list-panel').classList.contains('open')) {
+    updateLPTitle();
+    updateSearchPlaceholder();
+    renderLPContent();
+  }
+}
+
 // ─── THEME ───────────────────────────────────────────────
 const DARK = ':root{--bg:#000000;--surface:#1c1c1e;--surface2:#2c2c2e;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.14);--green:#30d158;--green-l:rgba(48,209,88,.18);--green-m:rgba(48,209,88,.4);--blue:#0a84ff;--blue-l:rgba(10,132,255,.18);--blue-m:rgba(10,132,255,.4);--brown:#d97706;--brown-l:rgba(217,119,6,.18);--teal:#14b8a6;--teal-l:rgba(20,184,166,.18);--danger:#ff453a;--danger-l:rgba(255,69,58,.18);--warn:#ffd60a;--warn-l:rgba(255,214,10,.18);--purple:#bf5af2;--purple-l:rgba(191,90,242,.18);--text:#f2f2f7;--text2:#ebebf599;--muted:rgba(235,235,245,.4);--blur-nav:rgba(28,28,30,.92);--shadow:0 1px 3px rgba(0,0,0,.6);--shadow-md:0 4px 16px rgba(0,0,0,.7);--shadow-lg:0 12px 36px rgba(0,0,0,.8)}';
 const LIGHT = ':root{--bg:#f2f2f7;--surface:#fff;--surface2:#f2f2f7;--border:rgba(60,60,67,.18);--border2:#cbd5e1;--green:#16a34a;--green-l:#dcfce7;--green-m:#86efac;--blue:#2563eb;--blue-l:#dbeafe;--blue-m:#93c5fd;--brown:#b45309;--brown-l:#fff7ed;--teal:#0d9488;--teal-l:#ccfbf1;--danger:#dc2626;--danger-l:#fee2e2;--warn:#d97706;--warn-l:#fef3c7;--purple:#7c3aed;--purple-l:#ede9fe;--text:#0f172a;--text2:#475569;--muted:#94a3b8;--blur-nav:rgba(242,242,247,.88);--shadow:0 1px 4px rgba(0,0,0,.07),0 0 0 .5px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.1);--shadow-lg:0 10px 28px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}';
@@ -609,6 +730,11 @@ function toggleTheme() {
   window.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.onclick = toggleTheme;
+    // Apply saved language to all data-i18n elements on page load
+    const lb = document.getElementById('lang-toggle');
+    if (lb) lb.textContent = lang === 'tr' ? 'TR' : 'EN';
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   });
 })();
 
@@ -651,10 +777,10 @@ function doLogin() {
   const nameRaw = document.getElementById('l-name').value.trim();
   const pin     = document.getElementById('l-pin').value.trim();
   const err     = document.getElementById('l-err');
-  if (!nameRaw) { err.textContent = 'Please enter your username'; return; }
+  if (!nameRaw) { err.textContent = t('enterUsername'); return; }
   const user = USERS[nameRaw.toLowerCase()];
-  if (!user) { err.textContent = 'Unknown username'; return; }
-  if (pin !== user.pin) { err.textContent = 'Incorrect pin'; return; }
+  if (!user) { err.textContent = t('unknownUser'); return; }
+  if (pin !== user.pin) { err.textContent = t('wrongPin'); return; }
   err.textContent = '';
   role = user.role;
   const name = nameRaw.charAt(0).toUpperCase() + nameRaw.slice(1).toLowerCase();
@@ -668,6 +794,7 @@ function doLogin() {
   rb.textContent = role.toUpperCase();
   rb.className = 'rbadge ' + (role === 'manager' ? 'badge-manager' : 'badge-employee');
   applyRoleUI();
+  setLang(lang);
   loadAll(); subscribeRealtime();
 }
 
@@ -710,7 +837,7 @@ async function loadAll() {
     render();
   } catch(e) {
     setSync('err', 'error');
-    toast('Connection error', 'error');
+    toast(t('connectionError'), 'error');
   }
 }
 
@@ -752,13 +879,13 @@ function renderStats() {
   if (last) {
     const ts = last.time ? last.time.replace('T',' ').slice(0,16) : last.time;
     document.getElementById('s-time').textContent = ts;
-    document.getElementById('s-by').textContent   = 'by ' + last.username;
+    document.getElementById('s-by').textContent   = t('by') + ' ' + last.username;
   }
   // nav tile subtitles
-  const ps = document.getElementById('dnt-prod-sub');  if (ps) ps.textContent = products.length + ' items';
-  const ms = document.getElementById('dnt-mat-sub');   if (ms) ms.textContent = materials.length + ' items';
-  const os = document.getElementById('dnt-other-sub'); if (os) os.textContent = othermaterials.length + ' items';
-  const hs = document.getElementById('dnt-hist-sub');  if (hs) hs.textContent = history.length + ' entries';
+  const ps = document.getElementById('dnt-prod-sub');  if (ps) ps.textContent = products.length + ' ' + t('items');
+  const ms = document.getElementById('dnt-mat-sub');   if (ms) ms.textContent = materials.length + ' ' + t('items');
+  const os = document.getElementById('dnt-other-sub'); if (os) os.textContent = othermaterials.length + ' ' + t('items');
+  const hs = document.getElementById('dnt-hist-sub');  if (hs) hs.textContent = history.length + ' ' + t('entries');
 }
 
 function scrollToLowStock() { openListPage('lowstock'); }
@@ -789,15 +916,15 @@ function renderDashboardPreviews() {
   // LOW STOCK (always shown even if empty)
   html += `<div class="dash-section">
     <div class="dash-section-hdr">
-      <span class="dash-section-lbl">⚠️ Low Stock</span>
-      <button class="dash-section-act" onclick="openListPage('lowstock')">See all →</button>
+      <span class="dash-section-lbl">⚠️ ${t('lowStock')}</span>
+      <button class="dash-section-act" onclick="openListPage('lowstock')">${t('seeAll')}</button>
     </div>
     <div class="preview-list">`;
   if (lowItems.length) {
     lowItems.forEach(i => html += buildRow('⚠️','red', i.name,
       `${i.qty} ${i.unit||''} • min ${i.min}`, 'Low','red', `openListPage('lowstock')`));
   } else {
-    html += `<div class="empty" style="padding:20px;text-align:center;font-size:13px">✅ All items sufficiently stocked</div>`;
+    html += `<div class="empty" style="padding:20px;text-align:center;font-size:13px">✅ ${t('allStocked')}</div>`;
   }
   html += '</div></div>';
 
@@ -805,8 +932,8 @@ function renderDashboardPreviews() {
   if (recentH.length) {
     html += `<div class="dash-section">
       <div class="dash-section-hdr">
-        <span class="dash-section-lbl">Recent Activity</span>
-        <button class="dash-section-act" onclick="openListPage('history')">See all →</button>
+        <span class="dash-section-lbl">${t('recentActivity')}</span>
+        <button class="dash-section-act" onclick="openListPage('history')">${t('seeAll')}</button>
       </div>
       <div class="preview-list">`;
     recentH.forEach(h => {
@@ -847,14 +974,14 @@ function updateLPTitle() {
   let title = LP_TITLES[lpCurrentTab] || 'Items';
   if (lpCurrentTab === 'products' && lpMarket) {
     if (lpMarket === 'fabrika') {
-      title = 'Fabrika Stoğu';
+      title = t('fabrika');
     } else {
-      const m = lpMarket === 'yurtici' ? 'Yurt İçi' : 'Yurt Dışı';
-      title = lpCompany ? `${m} › ${lpCompany === '__none__' ? 'Firma Yok' : lpCompany}` : m;
+      const m = lpMarket === 'yurtici' ? t('yurtici') : t('yurtdisi');
+      title = lpCompany ? `${m} › ${lpCompany === '__none__' ? t('noCompany') : lpCompany}` : m;
     }
   } else if (lpCurrentTab === 'othermaterials' && lpSection) {
-    const s = lpSection === 'koli' ? 'Koli' : 'Poşet';
-    title = lpCondition ? `${s} › ${lpCondition === 'yeni' ? 'Yeni' : 'Eski'}` : s;
+    const s = lpSection === 'koli' ? t('koli') : t('poset');
+    title = lpCondition ? `${s} › ${lpCondition === 'yeni' ? t('yeni') : t('eski')}` : s;
   }
   const el = document.getElementById('lp-title');
   if (el) el.textContent = title;
@@ -890,7 +1017,7 @@ function openListPage(type) {
   if (addBtn) {
     const noAdd = type === 'lowstock' || type === 'history';
     addBtn.style.display = noAdd ? 'none' : '';
-    addBtn.textContent = type === 'products' ? '+ Add Product' : type === 'materials' ? '+ Add Material' : '+ Add Item';
+    addBtn.textContent = type === 'products' ? t('addProduct') : type === 'materials' ? t('addMaterial') : t('addItem');
   }
   applyRoleUI();
   renderLPContent();
@@ -915,7 +1042,7 @@ function lpSwitchTab(type, el) {
   if (addBtn) {
     const noAdd = type === 'lowstock' || type === 'history';
     addBtn.style.display = noAdd ? 'none' : '';
-    addBtn.textContent = type === 'products' ? '+ Add Product' : type === 'materials' ? '+ Add Material' : '+ Add Item';
+    addBtn.textContent = type === 'products' ? t('addProduct') : type === 'materials' ? t('addMaterial') : t('addItem');
   }
   renderLPContent();
 }
@@ -926,20 +1053,20 @@ function updateSearchPlaceholder() {
   const el = document.getElementById('lp-search');
   if (!el) return;
   if (lpCurrentTab === 'products') {
-    if (!lpMarket) el.placeholder = 'Piyasa ara…';
-    else if (!lpCompany && lpMarket !== 'fabrika') el.placeholder = 'Firma ara…';
-    else el.placeholder = 'Ürün ara…';
+    if (!lpMarket) el.placeholder = t('searchMarket');
+    else if (!lpCompany && lpMarket !== 'fabrika') el.placeholder = t('searchCompany');
+    else el.placeholder = t('searchProduct');
   } else if (lpCurrentTab === 'materials') {
-    el.placeholder = 'Ürün veya tedarikçi ara…';
+    el.placeholder = t('searchSupplier');
   } else if (lpCurrentTab === 'othermaterials') {
-    if (!lpSection) el.placeholder = 'Bölüm ara…';
-    else el.placeholder = 'Ürün ara…';
+    if (!lpSection) el.placeholder = t('searchSection');
+    else el.placeholder = t('searchProduct');
   } else if (lpCurrentTab === 'lowstock') {
-    el.placeholder = 'Ürün ara…';
+    el.placeholder = t('searchProduct');
   } else if (lpCurrentTab === 'history') {
-    el.placeholder = 'Geçmiş ara…';
+    el.placeholder = t('searchHistory');
   } else {
-    el.placeholder = 'Search…';
+    el.placeholder = t('search');
   }
 }
 function lpAddItem() { if (lpCurrentTab !== 'lowstock' && lpCurrentTab !== 'history') openItemModal(lpCurrentTab, null); }
@@ -962,7 +1089,7 @@ function renderLPContent() {
   }
 
   function renderItemGrid(type, items) {
-    if (!items.length) return `<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`;
+    if (!items.length) return `<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`;
     const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
     const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
     return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
@@ -971,8 +1098,8 @@ function renderLPContent() {
   // HISTORY
   if (lpCurrentTab === 'history') {
     const f = lpSearchTerm ? history.filter(h=>(h.text||'').toLowerCase().includes(lpSearchTerm)||(h.username||'').toLowerCase().includes(lpSearchTerm)) : history;
-    if (!f.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?'No results':'No history yet'}</div>`; return; }
-    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} — by ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">Clear History</button></div>`:'');
+    if (!f.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noHistoryYet')}</div>`; return; }
+    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} — ${t('by')} ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">${t('clearHistory')}</button></div>`:'');
     return;
   }
 
@@ -981,7 +1108,7 @@ function renderLPContent() {
     const all = [...products.map(i=>({...i,_type:'products'})),...materials.map(i=>({...i,_type:'materials'})),...othermaterials.map(i=>({...i,_type:'othermaterials'}))];
     let items = all.filter(i=>i.qty<=i.min);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
-    if (!items.length) { el.innerHTML=`<div class="empty">✅ ${lpSearchTerm?'No results':'All items are sufficiently stocked'}</div>`; return; }
+    if (!items.length) { el.innerHTML=`<div class="empty">✅ ${lpSearchTerm?t('noResults'):t('allStocked')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(i._type,i.id)}</div></td></tr>`;}).join('');
     const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(i._type,i.id)}</div></div>`;}).join('');
     el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
@@ -996,11 +1123,11 @@ function renderLPContent() {
       const fabCnt = products.filter(p=>p.market==='fabrika').length;
       const noMkt  = products.filter(p=>!p.market||!['yurtici','yurtdisi','fabrika'].includes(p.market));
       let html = `<div class="dash-nav-grid">`;
-      html += makeDrillTile('🏠','var(--blue-l)','Yurt İçi',`${icCnt} ürün`,{market:'yurtici'});
-      html += makeDrillTile('✈️','var(--teal-l)','Yurt Dışı',`${disCnt} ürün`,{market:'yurtdisi'});
-      html += makeDrillTile('🏭','var(--purple-l)','Fabrika Stoğu',`${fabCnt} ürün`,{market:'fabrika'});
+      html += makeDrillTile('🏠','var(--blue-l)',t('yurtici'),`${icCnt} ${t('products_lc')}`,{market:'yurtici'});
+      html += makeDrillTile('✈️','var(--teal-l)',t('yurtdisi'),`${disCnt} ${t('products_lc')}`,{market:'yurtdisi'});
+      html += makeDrillTile('🏭','var(--purple-l)',t('fabrika'),`${fabCnt} ${t('products_lc')}`,{market:'fabrika'});
       html += '</div>';
-      if (noMkt.length) html += `<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noMkt.length} ürün henüz piyasa bilgisi içermiyor. Düzenleyerek güncelleyin.</div>`;
+      if (noMkt.length) html += `<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noMkt.length} ${t('noMarketInfo')}</div>`;
       el.innerHTML = html; return;
     }
     // Fabrika: no company drill, show items directly
@@ -1009,31 +1136,31 @@ function renderLPContent() {
       window._lpDrillOptions.push({market:null, company:null});
       let items = products.filter(p=>p.market==='fabrika');
       if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
-      const breadcrumb = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Stok Türleri</button></div>`;
+      const breadcrumb = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${t('stockTypes')}</button></div>`;
       el.innerHTML = breadcrumb + renderItemGrid('products', items); return;
     }
     if (!lpCompany) {
-      const mktLabel = lpMarket==='yurtici'?'Yurt İçi':'Yurt Dışı';
+      const mktLabel = lpMarket==='yurtici'?t('yurtici'):t('yurtdisi');
       const backIdx = window._lpDrillOptions.length;
       window._lpDrillOptions.push({market:null,company:null});
       const filtered = products.filter(p=>p.market===lpMarket);
       let companies = [...new Set(filtered.map(p=>p.company||'').filter(Boolean))].sort();
       const noComp = filtered.filter(p=>!p.company);
       if (lpSearchTerm) companies = companies.filter(c => c.toLowerCase().includes(lpSearchTerm));
-      const showNoComp = noComp.length && (!lpSearchTerm || 'firma yok'.includes(lpSearchTerm));
-      let html = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Piyasalar</button></div>`;
+      const showNoComp = noComp.length && (!lpSearchTerm || t('noCompany').toLowerCase().includes(lpSearchTerm));
+      let html = `<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${t('markets')}</button></div>`;
       if (!companies.length && !showNoComp) {
-        html += `<div class="empty">${lpSearchTerm ? 'Firma bulunamadı' : mktLabel+' henüz ürün yok'}</div>`; el.innerHTML=html; return;
+        html += `<div class="empty">${lpSearchTerm ? t('noCompanyFound') : mktLabel+' '+t('noProductsYet')}</div>`; el.innerHTML=html; return;
       }
       html += `<div class="dash-nav-grid">`;
-      companies.forEach(c => html += makeDrillTile('🏢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} ürün`,{market:lpMarket,company:c}));
-      if (showNoComp) html += makeDrillTile('❓','var(--surface2)','Firma Yok',`${noComp.length} ürün`,{market:lpMarket,company:'__none__'});
+      companies.forEach(c => html += makeDrillTile('🏢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} ${t('products_lc')}`,{market:lpMarket,company:c}));
+      if (showNoComp) html += makeDrillTile('❓','var(--surface2)',t('noCompany'),`${noComp.length} ${t('products_lc')}`,{market:lpMarket,company:'__none__'});
       html += '</div>';
       el.innerHTML = html; return;
     }
     // Items level
-    const mktLabel = lpMarket==='yurtici'?'Yurt İçi':'Yurt Dışı';
-    const compLabel = lpCompany==='__none__'?'Firma Yok':lpCompany;
+    const mktLabel = lpMarket==='yurtici'?t('yurtici'):t('yurtdisi');
+    const compLabel = lpCompany==='__none__'?t('noCompany'):lpCompany;
     const backIdx = window._lpDrillOptions.length;
     window._lpDrillOptions.push({market:lpMarket,company:null});
     let items = products.filter(p=>p.market===lpMarket && (lpCompany==='__none__'?!p.company:p.company===lpCompany));
@@ -1046,7 +1173,7 @@ function renderLPContent() {
   if (lpCurrentTab === 'materials') {
     let items = materials;
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
-    if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
+    if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
     const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
     el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
@@ -1060,10 +1187,10 @@ function renderLPContent() {
       const posetCnt=othermaterials.filter(i=>i.section==='poset').length;
       const noSec=othermaterials.filter(i=>!i.section);
       let html=`<div class="dash-nav-grid">`;
-      html+=makeDrillTile('📦','var(--brown-l)','Koli',`${koliCnt} çeşit`,{section:'koli'});
-      html+=makeDrillTile('🛒','var(--green-l)','Poşet',`${posetCnt} çeşit`,{section:'poset'});
+      html+=makeDrillTile('📦','var(--brown-l)',t('koli'),`${koliCnt} ${t('types')}`,{section:'koli'});
+      html+=makeDrillTile('🛒','var(--green-l)',t('poset'),`${posetCnt} ${t('types')}`,{section:'poset'});
       html+='</div>';
-      if (noSec.length) html+=`<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noSec.length} ürün bölüm bilgisi içermiyor.</div>`;
+      if (noSec.length) html+=`<div style="margin-top:14px;font-size:13px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:12px;border:.5px solid var(--border)">ℹ️ ${noSec.length} ${t('noSectionInfo')}</div>`;
       el.innerHTML=html; return;
     }
     if (!lpCondition) {
@@ -1073,38 +1200,38 @@ function renderLPContent() {
         // Poşet: no Yeni/Eski drill, show items directly
         let items=othermaterials.filter(i=>i.section==='poset');
         if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.measurements||'').toLowerCase().includes(lpSearchTerm));
-        const breadcrumb=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
-        if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
+        const breadcrumb=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${t('sections')}</button></div>`;
+        if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
         const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
-        const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ölçü: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
-        el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ölçüler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
+        const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${t('size')}: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
+        el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${t('measurements')}</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
         return;
       }
       // Koli: Yeni/Eski drill
       const filtered=othermaterials.filter(i=>i.section==='koli');
       const yeniCnt=filtered.filter(i=>i.condition==='yeni').length;
       const eskiCnt=filtered.filter(i=>i.condition==='eski').length;
-      let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ Bölümler</button></div>`;
+      let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${t('sections')}</button></div>`;
       html+=`<div class="dash-nav-grid">`;
-      html+=makeDrillTile('🆕','var(--green-l)','Yeni',`${yeniCnt} çeşit`,{section:'koli',condition:'yeni'});
-      html+=makeDrillTile('🔄','var(--surface2)','Eski',`${eskiCnt} çeşit`,{section:'koli',condition:'eski'});
+      html+=makeDrillTile('🆕','var(--green-l)',t('yeni'),`${yeniCnt} ${t('types')}`,{section:'koli',condition:'yeni'});
+      html+=makeDrillTile('🔄','var(--surface2)',t('eski'),`${eskiCnt} ${t('types')}`,{section:'koli',condition:'eski'});
       html+='</div>';
       el.innerHTML=html; return;
     }
     // Items level for other materials
-    const secLabel=lpSection==='koli'?'Koli':'Poşet';
-    const condLabel=lpCondition==='yeni'?'Yeni':'Eski';
+    const secLabel=lpSection==='koli'?t('koli'):t('poset');
+    const condLabel=lpCondition==='yeni'?t('yeni'):t('eski');
     const showMsr=lpSection==='poset'&&lpCondition==='yeni';
     const backIdx=window._lpDrillOptions.length;
     window._lpDrillOptions.push({section:lpSection,condition:null});
     let items=othermaterials.filter(i=>i.section===lpSection&&i.condition===lpCondition);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.measurements||'').toLowerCase().includes(lpSearchTerm));
     const breadcrumb=`<div style="margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${secLabel}</button><span style="color:var(--muted);font-size:13px">›</span><span style="font-size:13px;font-weight:700">${condLabel}</span></div>`;
-    if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?'No results':'No items yet'}</div>`; return; }
+    if (!items.length) { el.innerHTML=breadcrumb+`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
     if (showMsr) {
       const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
-      const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">Ölçü: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
-      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Ölçüler</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
+      const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${t('size')}: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
+      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${t('measurements')}</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     } else {
       el.innerHTML = breadcrumb + renderItemGrid('othermaterials', items);
     }
@@ -1141,7 +1268,7 @@ function openItemModal(type, id) {
   editItemMarket = null; editItemSection = null; editItemCondition = null;
   const item = id ? getList(type).find(i => i.id === id) : null;
   const label = type === 'products' ? 'Product' : type === 'materials' ? 'Material' : 'Item';
-  document.getElementById('item-title').textContent = item ? 'Edit '+label : 'Add '+label;
+  document.getElementById('item-title').textContent = item ? t('editItemTitle') : t('addItemTitle');
   document.getElementById('i-name').value  = item?.name || '';
   document.getElementById('i-cat').value   = item?.category || '';
   document.getElementById('i-qty').value   = item != null ? item.qty : '';
@@ -1186,7 +1313,7 @@ async function saveItem() {
   const qty  = parseFloat(document.getElementById('i-qty').value) || 0;
   const unit = document.getElementById('i-unit').value.trim();
   const min  = parseFloat(document.getElementById('i-min').value) || 0;
-  if (!name) { toast('Please enter item name', 'error'); return; }
+  if (!name) { toast(lang==='tr'?'Lütfen öğe adını girin':'Please enter item name', 'error'); return; }
   const extra = {};
   if (editType === 'products') {
     extra.market  = editItemMarket || null;
@@ -1201,21 +1328,21 @@ async function saveItem() {
     extra.measurements = editItemSection === 'poset' ? (document.getElementById('i-measurements').value.trim()||null) : null;
   }
   const btn = document.getElementById('item-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = t('saving');
   try {
     if (editId) {
       const old = getList(editType).find(i => i.id === editId);
       await sb.from(editType).update({ name, category: cat, qty, unit, min, ...extra }).eq('id', editId);
       await addHistory('update', `Updated "${name}" — qty: ${old.qty} → ${qty} ${unit}`);
-      toast('Item updated');
+      toast(t('itemUpdated'));
     } else {
       await sb.from(editType).insert({ id: uid(), name, category: cat, qty, unit, min, ...extra });
       await addHistory('add', `Added "${name}" to ${editType} — qty: ${qty} ${unit}`);
-      toast('Item added');
+      toast(t('itemAdded'));
     }
     closeItemModal();
-  } catch(e) { toast('Save failed — check connection', 'error'); }
-  btn.disabled = false; btn.textContent = 'Save Item';
+  } catch(e) { toast(t('saveFailed'), 'error'); }
+  btn.disabled = false; btn.textContent = t('saveItem');
 }
 
 // ─── UPDATE MODAL ────────────────────────────────────────
@@ -1234,9 +1361,9 @@ function closeUpdModal() { document.getElementById('upd-overlay').classList.remo
 async function saveUpdate() {
   const action = document.getElementById('u-action').value;
   const amount = parseFloat(document.getElementById('u-amount').value);
-  if (isNaN(amount) || amount < 0) { toast('Enter a valid amount', 'error'); return; }
+  if (isNaN(amount) || amount < 0) { toast(lang==='tr'?'Geçerli bir miktar girin':'Enter a valid amount', 'error'); return; }
   const btn = document.getElementById('upd-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = t('saving');
   const { type, id } = updTarget;
   const item = getList(type).find(i => i.id === id);
   const oldQty = item.qty;
@@ -1246,18 +1373,18 @@ async function saveUpdate() {
     const desc = action === 'set' ? `set to ${newQty}` : action === 'add'
       ? `+${amount} (${oldQty}→${newQty})` : `-${amount} (${oldQty}→${newQty})`;
     await addHistory('update', `"${item.name}" stock: ${desc} ${item.unit}`);
-    toast('Stock updated');
+    toast(t('stockUpdated'));
     closeUpdModal();
-  } catch(e) { toast('Update failed', 'error'); }
-  btn.disabled = false; btn.textContent = 'Update Stock';
+  } catch(e) { toast(t('updateFailed'), 'error'); }
+  btn.disabled = false; btn.textContent = t('updateStock');
 }
 
 // ─── DELETE ──────────────────────────────────────────────
 function confirmDelete(type, id) {
   const item = getList(type).find(i => i.id === id);
   showConfirm({
-    title: 'Delete Item?',
-    desc: `"${item.name}" will be permanently removed.`,
+    title: t('deleteItemQ'),
+    desc: `"${item.name}" ${t('permRemoved')}`,
     onConfirm: () => deleteItem(type, id)
   });
 }
@@ -1266,30 +1393,31 @@ async function deleteItem(type, id) {
   try {
     await sb.from(type).delete().eq('id', id);
     await addHistory('delete', `Deleted "${item.name}" from ${type}`);
-    toast('Item deleted');
-  } catch(e) { toast('Delete failed', 'error'); }
+    toast(t('itemDeleted'));
+  } catch(e) { toast(t('deleteFailed'), 'error'); }
 }
 
 // ─── HISTORY ─────────────────────────────────────────────
 function confirmClearHistory() {
   showConfirm({
-    icon: '🗑', title: 'Clear History?',
-    desc: 'All movement history will be deleted permanently.',
-    btnLabel: 'Clear All',
+    icon: '🗑', title: t('clearHistoryQ'),
+    desc: t('clearHistoryDesc'),
+    btnLabel: t('clearAll'),
     onConfirm: clearHistory
   });
 }
 async function clearHistory() {
   try {
     await sb.from('history').delete().not('id', 'is', null);
-    toast('History cleared');
-  } catch(e) { toast('Failed to clear history', 'error'); }
+    toast(t('historyCleared'));
+  } catch(e) { toast(t('clearHistoryFailed'), 'error'); }
 }
 
 async function addHistory(action, text) {
   const now = new Date();
-  const time = now.toLocaleDateString('tr-TR') + ' ' +
-    now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  const loc = lang === 'tr' ? 'tr-TR' : 'en-US';
+  const time = now.toLocaleDateString(loc) + ' ' +
+    now.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
   try {
     await sb.from('history').insert({ id: uid(), action, text, time, username: userName });
   } catch(e) {}
