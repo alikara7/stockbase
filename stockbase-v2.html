@@ -861,7 +861,7 @@ function logout() {
 
 function applyRoleUI() {
   const exBtn = document.getElementById('excel-upload-btn');
-  if (exBtn) exBtn.style.display = (userName === 'salih') ? '' : 'none';
+  if (exBtn) exBtn.style.display = (userName.toLowerCase() === 'salih') ? '' : 'none';
 }
 
 // ─── DATA ────────────────────────────────────────────────
