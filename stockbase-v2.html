@@ -670,6 +670,9 @@ const I18N = {
     excelNoData: 'No data found in Excel', excelResults: 'Sync Results',
     excelProducts: 'Products', excelMaterials: 'Raw Materials', excelKoli: 'Box', excelPoset: 'Bag',
     excelClose: 'Close', excelSkipped: 'skipped (same qty)',
+    excelPassword: 'Excel Password', excelPasswordDesc: 'This file is password-protected. Enter the password to continue.',
+    excelPasswordPlaceholder: 'Enter Excel password…', excelStart: 'Start Sync',
+    excelWrongPassword: 'Wrong password or file could not be read.',
   },
   tr: {
     yurtici: 'Yurt İçi', yurtdisi: 'Yurt Dışı', fabrika: 'Fabrika Stoğu',
@@ -723,6 +726,9 @@ const I18N = {
     excelNoData: 'Excel dosyasında veri bulunamadı', excelResults: 'Senkron Sonuçları',
     excelProducts: 'Ürünler', excelMaterials: 'Hammaddeler', excelKoli: 'Koli', excelPoset: 'Poşet',
     excelClose: 'Kapat', excelSkipped: 'atlandı (aynı miktar)',
+    excelPassword: 'Excel Şifresi', excelPasswordDesc: 'Bu dosya şifre korumalı. Devam etmek için şifreyi girin.',
+    excelPasswordPlaceholder: 'Excel şifresini girin…', excelStart: 'Senkronu Başlat',
+    excelWrongPassword: 'Yanlış şifre veya dosya okunamadı.',
   }
 };
 function t(key) { return (I18N[lang] && I18N[lang][key]) || (I18N.en[key]) || key; }
@@ -1484,16 +1490,55 @@ function showExcelOverlay(icon, title, bodyHtml, showClose) {
 
 function norm(s) { return (s || '').toString().trim().toUpperCase().replace(/\s+/g, ' '); }
 
+let _excelFileData = null;
+
 async function handleExcelUpload(input) {
   const file = input.files[0];
   input.value = '';
   if (!file) return;
 
+  _excelFileData = await file.arrayBuffer();
+
+  // Try without password first
+  try {
+    const wb = XLSX.read(_excelFileData, { type: 'array' });
+    await doExcelSync(wb);
+    return;
+  } catch(e) {
+    // If it fails, ask for password
+    showPasswordPrompt();
+  }
+}
+
+function showPasswordPrompt() {
+  const html = `<p style="text-align:center;margin-bottom:14px">${t('excelPasswordDesc')}</p>
+    <input type="password" id="excel-pw" placeholder="${t('excelPasswordPlaceholder')}" 
+      style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;box-sizing:border-box;margin-bottom:6px"
+      onkeydown="if(event.key==='Enter')doPasswordSync()">
+    <div id="excel-pw-err" style="color:var(--danger);font-size:12px;min-height:18px"></div>`;
+  showExcelOverlay('🔐', t('excelPassword'), html, false);
+  document.getElementById('excel-ov-btns').style.display = 'flex';
+  document.getElementById('excel-ov-btns').innerHTML = `
+    <button class="ld-cancel" onclick="closeExcelOverlay()">${t('cancel')}</button>
+    <button class="ld-confirm" style="background:var(--green)" onclick="doPasswordSync()">${t('excelStart')}</button>`;
+  setTimeout(() => { const el = document.getElementById('excel-pw'); if(el) el.focus(); }, 300);
+}
+
+async function doPasswordSync() {
+  const pw = document.getElementById('excel-pw').value;
+  try {
+    const wb = XLSX.read(_excelFileData, { type: 'array', password: pw });
+    await doExcelSync(wb);
+  } catch(e) {
+    const errEl = document.getElementById('excel-pw-err');
+    if (errEl) errEl.textContent = t('excelWrongPassword');
+  }
+}
+
+async function doExcelSync(wb) {
   showExcelOverlay('⏳', t('excelSync'), `<p style="text-align:center">${t('excelParsing')}</p>`, false);
 
   try {
-    const data = await file.arrayBuffer();
-    const wb = XLSX.read(data, { type: 'array' });
     const sheets = wb.SheetNames;
 
     // Reload current data from Supabase
