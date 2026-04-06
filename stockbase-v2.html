@@ -14,6 +14,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style id="theme-style">
 :root {
   --bg:#f2f2f7; --surface:#fff; --surface2:#f2f2f7; --border:rgba(60,60,67,.18); --border2:#cbd5e1;
@@ -74,6 +75,8 @@ select:focus{border-color:var(--green);background:var(--surface)}
 .icon-btn:hover{border-color:var(--border2);color:var(--text)}
 .theme-btn{font-size:18px;padding:6px 10px;border-radius:8px}
 .lang-btn{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;letter-spacing:.5px;font-family:'DM Mono',monospace}
+.excel-btn{font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;background:var(--green-l);color:var(--green);border:1.5px solid var(--green)}
+.excel-btn:hover{background:var(--green);color:#fff}
 /* MAIN */
 .main{padding:28px;max-width:1360px;margin:0 auto}
 /* STATS */
@@ -414,6 +417,18 @@ html[data-theme="dark"] .list-panel{background:#000}
   </div>
 </div>
 
+<!-- Excel Sync Overlay -->
+<div class="logout-overlay" id="excel-overlay" onclick="if(event.target===this)closeExcelOverlay()">
+  <div class="logout-dialog" style="max-width:440px">
+    <div class="ld-icon" id="excel-ov-icon">📥</div>
+    <div class="ld-title" id="excel-ov-title">Excel Sync</div>
+    <div id="excel-ov-body" style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px;text-align:left;max-height:50vh;overflow-y:auto"></div>
+    <div class="ld-btns" id="excel-ov-btns" style="display:none">
+      <button class="ld-cancel" onclick="closeExcelOverlay()" data-i18n="excelClose">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Logout Confirm Dialog -->
 <div class="logout-overlay" id="logout-overlay" onclick="if(event.target===this)closeLogoutOverlay()">
   <div class="logout-dialog">
@@ -446,6 +461,8 @@ html[data-theme="dark"] .list-panel{background:#000}
       </div>
       <button class="icon-btn theme-btn" id="theme-toggle" title="Toggle theme">🌙</button>
       <button class="icon-btn lang-btn" id="lang-toggle" title="Language">EN</button>
+      <button class="icon-btn excel-btn" id="excel-upload-btn" onclick="document.getElementById('excel-file-input').click()" style="display:none" data-i18n="excelUpload">📥 Excel Yükle</button>
+      <input type="file" id="excel-file-input" accept=".xls,.xlsx" style="display:none" onchange="handleExcelUpload(this)">
       <button class="icon-btn sync-btn" onclick="loadAll()">↻<span class="sync-label"> Sync</span></button>
       <button class="icon-btn logout-btn" onclick="confirmLogout()" data-i18n="logOut">Log out</button>
     </div>
@@ -646,6 +663,13 @@ const I18N = {
     deleteItemQ: 'Delete Item?', permRemoved: 'will be permanently removed.',
     clearHistoryQ: 'Clear History?', clearHistoryDesc: 'All movement history will be deleted permanently.',
     clearAll: 'Clear All', historyCleared: 'History cleared', clearHistoryFailed: 'Failed to clear history',
+    excelUpload: 'Upload Excel', excelSync: 'Excel Sync', excelSyncing: 'Syncing…',
+    excelSyncDone: 'Excel sync completed', excelSyncFail: 'Excel sync failed',
+    excelParsing: 'Parsing Excel file…', excelUpdating: 'Updating database…',
+    excelMatched: 'matched', excelUpdated: 'updated', excelNotFound: 'not found in database',
+    excelNoData: 'No data found in Excel', excelResults: 'Sync Results',
+    excelProducts: 'Products', excelMaterials: 'Raw Materials', excelKoli: 'Box', excelPoset: 'Bag',
+    excelClose: 'Close', excelSkipped: 'skipped (same qty)',
   },
   tr: {
     yurtici: 'Yurt İçi', yurtdisi: 'Yurt Dışı', fabrika: 'Fabrika Stoğu',
@@ -692,6 +716,13 @@ const I18N = {
     deleteItemQ: 'Öğeyi Sil?', permRemoved: 'kalıcı olarak silinecek.',
     clearHistoryQ: 'Geçmişi Temizle?', clearHistoryDesc: 'Tüm hareket geçmişi kalıcı olarak silinecek.',
     clearAll: 'Tümünü Temizle', historyCleared: 'Geçmiş temizlendi', clearHistoryFailed: 'Geçmiş temizlenemedi',
+    excelUpload: 'Excel Yükle', excelSync: 'Excel Senkron', excelSyncing: 'Senkronize ediliyor…',
+    excelSyncDone: 'Excel senkronizasyonu tamamlandı', excelSyncFail: 'Excel senkronizasyonu başarısız',
+    excelParsing: 'Excel dosyası okunuyor…', excelUpdating: 'Veritabanı güncelleniyor…',
+    excelMatched: 'eşleşti', excelUpdated: 'güncellendi', excelNotFound: 'veritabanında bulunamadı',
+    excelNoData: 'Excel dosyasında veri bulunamadı', excelResults: 'Senkron Sonuçları',
+    excelProducts: 'Ürünler', excelMaterials: 'Hammaddeler', excelKoli: 'Koli', excelPoset: 'Poşet',
+    excelClose: 'Kapat', excelSkipped: 'atlandı (aynı miktar)',
   }
 };
 function t(key) { return (I18N[lang] && I18N[lang][key]) || (I18N.en[key]) || key; }
@@ -829,7 +860,8 @@ function logout() {
 }
 
 function applyRoleUI() {
-  // role-based UI reserved for future use
+  const exBtn = document.getElementById('excel-upload-btn');
+  if (exBtn) exBtn.style.display = (role === 'manager') ? '' : 'none';
 }
 
 // ─── DATA ────────────────────────────────────────────────
@@ -1436,6 +1468,255 @@ async function addHistory(action, text) {
   try {
     await sb.from('history').insert({ id: uid(), action, text, time, username: userName });
   } catch(e) {}
+}
+
+// ─── EXCEL SYNC ──────────────────────────────────────────
+function closeExcelOverlay() {
+  document.getElementById('excel-overlay').classList.remove('open');
+}
+function showExcelOverlay(icon, title, bodyHtml, showClose) {
+  document.getElementById('excel-ov-icon').textContent = icon;
+  document.getElementById('excel-ov-title').textContent = title;
+  document.getElementById('excel-ov-body').innerHTML = bodyHtml;
+  document.getElementById('excel-ov-btns').style.display = showClose ? 'flex' : 'none';
+  document.getElementById('excel-overlay').classList.add('open');
+}
+
+function norm(s) { return (s || '').toString().trim().toUpperCase().replace(/\s+/g, ' '); }
+
+async function handleExcelUpload(input) {
+  const file = input.files[0];
+  input.value = '';
+  if (!file) return;
+
+  showExcelOverlay('⏳', t('excelSync'), `<p style="text-align:center">${t('excelParsing')}</p>`, false);
+
+  try {
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data, { type: 'array' });
+    const sheets = wb.SheetNames;
+
+    // Reload current data from Supabase
+    const [pRes, mRes, oRes] = await Promise.all([
+      sb.from('products').select('*'),
+      sb.from('materials').select('*'),
+      sb.from('othermaterials').select('*')
+    ]);
+    const dbProducts = pRes.data || [];
+    const dbMaterials = mRes.data || [];
+    const dbOther = oRes.data || [];
+
+    const results = { products: {updated:0, matched:0, notFound:[], skipped:0},
+                      materials: {updated:0, matched:0, notFound:[], skipped:0},
+                      koli: {updated:0, matched:0, notFound:[], skipped:0},
+                      poset: {updated:0, matched:0, notFound:[], skipped:0} };
+
+    showExcelOverlay('⏳', t('excelSync'), `<p style="text-align:center">${t('excelUpdating')}</p>`, false);
+
+    // ── Sheet 1: HAZIR MAMUL MÜŞTERİ → products (yurtici) ──
+    await syncProductSheet(wb, sheets, 0, 'yurtici', dbProducts, results.products,
+      row => ({ name: cellStr(row, 3), company: cellStr(row, 1), qty: cellNum(row, 7) }),
+      true);
+
+    // ── Sheet 2: YÖM HAZIR MAMUL → products (fabrika) ──
+    await syncProductSheet(wb, sheets, 1, 'fabrika', dbProducts, results.products,
+      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6) }),
+      false);
+
+    // ── Sheet 3: HAZIR MAMUL İHRACAT → products (yurtdisi) ──
+    await syncProductSheet(wb, sheets, 2, 'yurtdisi', dbProducts, results.products,
+      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6) }),
+      false);
+
+    // ── Sheet 4: BOBİN → materials ──
+    await syncMaterialSheet(wb, sheets, 3, dbMaterials, results.materials);
+
+    // ── Sheet 5: KOLİ → othermaterials (koli) ──
+    await syncKoliSheet(wb, sheets, 4, dbOther, results.koli);
+
+    // ── Sheet 6: POŞET → othermaterials (poset) ──
+    await syncPosetSheet(wb, sheets, 5, dbOther, results.poset);
+
+    // Reload data
+    await loadAll();
+
+    // Show results
+    const totalUpdated = results.products.updated + results.materials.updated + results.koli.updated + results.poset.updated;
+    const totalSkipped = results.products.skipped + results.materials.skipped + results.koli.skipped + results.poset.skipped;
+
+    let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">`;
+    const cats = [
+      { key: 'products', label: t('excelProducts'), icon: '🗃️' },
+      { key: 'materials', label: t('excelMaterials'), icon: '🌿' },
+      { key: 'koli', label: t('excelKoli'), icon: '📦' },
+      { key: 'poset', label: t('excelPoset'), icon: '🛍️' }
+    ];
+    for (const c of cats) {
+      const r = results[c.key];
+      html += `<div style="background:var(--surface2);border-radius:12px;padding:12px;border:1px solid var(--border)">
+        <div style="font-size:16px;margin-bottom:4px">${c.icon} ${c.label}</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">${r.updated}</div>
+        <div style="font-size:11px;color:var(--text2)">${t('excelUpdated')}</div>
+        ${r.skipped ? `<div style="font-size:11px;color:var(--muted)">${r.skipped} ${t('excelSkipped')}</div>` : ''}
+      </div>`;
+    }
+    html += `</div>`;
+
+    const allNotFound = [
+      ...results.products.notFound.map(n => `🗃️ ${n}`),
+      ...results.materials.notFound.map(n => `🌿 ${n}`),
+      ...results.koli.notFound.map(n => `📦 ${n}`),
+      ...results.poset.notFound.map(n => `🛍️ ${n}`)
+    ];
+    if (allNotFound.length > 0) {
+      html += `<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--danger)">${allNotFound.length} ${t('excelNotFound')}</summary>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;max-height:150px;overflow-y:auto">
+          ${allNotFound.map(n => `<div>${esc(n)}</div>`).join('')}
+        </div></details>`;
+    }
+
+    await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalSkipped} skipped`);
+
+    showExcelOverlay('✅', t('excelSyncDone'), html, true);
+    toast(`${t('excelSyncDone')} — ${totalUpdated} ${t('excelUpdated')}`, 'success', 5000);
+
+  } catch (err) {
+    console.error('Excel sync error:', err);
+    showExcelOverlay('❌', t('excelSyncFail'), `<p style="text-align:center;color:var(--danger)">${esc(err.message || String(err))}</p>`, true);
+    toast(t('excelSyncFail'), 'error');
+  }
+}
+
+function cellStr(row, col) { return (row[col] != null) ? String(row[col]).trim() : ''; }
+function cellNum(row, col) { const v = parseFloat(row[col]); return isNaN(v) ? 0 : Math.round(v); }
+
+function sheetToRows(wb, sheetIndex) {
+  if (sheetIndex >= wb.SheetNames.length) return [];
+  const ws = wb.Sheets[wb.SheetNames[sheetIndex]];
+  if (!ws) return [];
+  const json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  // Skip header rows (row 0 = title, row 1 = headers), data starts at row 2
+  return json.slice(2);
+}
+
+async function syncProductSheet(wb, sheets, sheetIdx, market, dbProducts, result, extractor, hasCodeCol) {
+  const rows = sheetToRows(wb, sheetIdx);
+  const marketProducts = dbProducts.filter(p => p.market === market);
+
+  for (const row of rows) {
+    const ex = extractor(row);
+    if (!ex.name) continue;
+
+    const nName = norm(ex.name);
+    const nComp = norm(ex.company);
+    // Match by name + company
+    const match = marketProducts.find(p => norm(p.name) === nName && norm(p.company || '') === nComp);
+    if (match) {
+      result.matched++;
+      if (match.qty !== ex.qty) {
+        await sb.from('products').update({ qty: ex.qty }).eq('id', match.id);
+        result.updated++;
+      } else {
+        result.skipped++;
+      }
+    } else if (nName) {
+      result.notFound.push(`${ex.name} (${ex.company || '-'})`);
+    }
+  }
+}
+
+async function syncMaterialSheet(wb, sheets, sheetIdx, dbMaterials, result) {
+  const rows = sheetToRows(wb, sheetIdx);
+
+  for (const row of rows) {
+    const supplier = cellStr(row, 1);
+    const type = cellStr(row, 2);
+    const color = cellStr(row, 3);
+    const width = cellStr(row, 4);
+    const micron = cellStr(row, 5);
+    const qty = cellNum(row, 6);
+
+    if (!type) continue;
+
+    // Compose name same way as original import: TYPE - COLOR - WIDTH mm - MICRON µ
+    const composedName = `${type} - ${color} - ${width} mm - ${micron} µ`;
+    const nName = norm(composedName);
+
+    const match = dbMaterials.find(m => norm(m.name) === nName);
+    if (match) {
+      result.matched++;
+      if (match.qty !== qty) {
+        await sb.from('materials').update({ qty }).eq('id', match.id);
+        result.updated++;
+      } else {
+        result.skipped++;
+      }
+    } else if (type) {
+      result.notFound.push(composedName);
+    }
+  }
+}
+
+async function syncKoliSheet(wb, sheets, sheetIdx, dbOther, result) {
+  const rows = sheetToRows(wb, sheetIdx);
+  const koliItems = dbOther.filter(o => o.section === 'koli');
+
+  for (const row of rows) {
+    const name = cellStr(row, 3);   // C4 = KULLANILAN ÜRÜN (item name like "750 CC")
+    const measurements = cellStr(row, 4); // C5 = ÜRÜN EBAT
+    const qty = cellNum(row, 7);    // C8 = MİKTAR
+
+    if (!name) continue;
+
+    const nName = norm(name);
+    const nMsr = norm(measurements);
+    // Match by name + measurements
+    const match = koliItems.find(o => norm(o.name) === nName && norm(o.measurements || '') === nMsr);
+    if (match) {
+      result.matched++;
+      if (match.qty !== qty) {
+        await sb.from('othermaterials').update({ qty }).eq('id', match.id);
+        result.updated++;
+      } else {
+        result.skipped++;
+      }
+    } else if (nName) {
+      result.notFound.push(`${name} (${measurements || '-'})`);
+    }
+  }
+}
+
+async function syncPosetSheet(wb, sheets, sheetIdx, dbOther, result) {
+  const rows = sheetToRows(wb, sheetIdx);
+  const posetItems = dbOther.filter(o => o.section === 'poset');
+
+  for (const row of rows) {
+    const category = cellStr(row, 1);    // C2 = ÜRÜN CİNSİ (HDPE, PP, etc.)
+    const usedFor = cellStr(row, 3);     // C4 = KULLANILAN ÜRÜN
+    const measurements = cellStr(row, 4); // C5 = ÜRÜN EBAT
+    const qty = cellNum(row, 9);         // C10 = MİKTAR
+
+    if (!category && !usedFor) continue;
+
+    // Name in DB was: "CATEGORY - USED_FOR" (e.g., "HDPE - 150 CC / 250 CC / 375 CC")
+    const composedName = `${category} - ${usedFor}`;
+    const nName = norm(composedName);
+    const nMsr = norm(measurements);
+
+    // Match by composed name + measurements
+    const match = posetItems.find(o => norm(o.name) === nName && norm(o.measurements || '') === nMsr);
+    if (match) {
+      result.matched++;
+      if (match.qty !== qty) {
+        await sb.from('othermaterials').update({ qty }).eq('id', match.id);
+        result.updated++;
+      } else {
+        result.skipped++;
+      }
+    } else if (nName.length > 3) {
+      result.notFound.push(`${composedName} (${measurements || '-'})`);
+    }
+  }
 }
 
 // ─── UTILS ───────────────────────────────────────────────
