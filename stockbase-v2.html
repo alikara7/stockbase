@@ -616,7 +616,7 @@ const I18N = {
     searchMarket: 'Search market…', searchCompany: 'Search company…',
     searchProduct: 'Search product…', searchSupplier: 'Search product or supplier…',
     searchSection: 'Search section…', searchHistory: 'Search history…',
-    search: 'Search…', measurements: 'Measurements', size: 'Size',
+    search: 'Search…', measurements: 'Measurements', size: 'Size', boxSize: 'Box Size',
     addProduct: '+ Add Product', addMaterial: '+ Add Material', addItem: '+ Add Item',
     clearHistory: 'Clear History',
     welcome: 'Welcome back,', overview: "Here's an overview of your inventory.",
@@ -662,7 +662,7 @@ const I18N = {
     searchMarket: 'Piyasa ara…', searchCompany: 'Firma ara…',
     searchProduct: 'Ürün ara…', searchSupplier: 'Ürün veya tedarikçi ara…',
     searchSection: 'Bölüm ara…', searchHistory: 'Geçmiş ara…',
-    search: 'Ara…', measurements: 'Ölçüler', size: 'Ölçü',
+    search: 'Ara…', measurements: 'Ölçüler', size: 'Ölçü', boxSize: 'Koli Ölçüleri',
     addProduct: '+ Ürün Ekle', addMaterial: '+ Hammadde Ekle', addItem: '+ Öğe Ekle',
     clearHistory: 'Geçmişi Temizle',
     welcome: 'Tekrar hoş geldin,', overview: 'Envanter durumunuz.',
@@ -1233,7 +1233,7 @@ function renderLPContent() {
     // Items level for other materials
     const secLabel=lpSection==='koli'?t('koli'):t('poset');
     const condLabel=lpCondition==='yeni'?t('yeni'):t('eski');
-    const showMsr=lpSection==='poset'&&lpCondition==='yeni';
+    const showMsr=true;
     const backIdx=window._lpDrillOptions.length;
     window._lpDrillOptions.push({section:lpSection,condition:null});
     let items=othermaterials.filter(i=>i.section===lpSection&&i.condition===lpCondition);
@@ -1243,7 +1243,7 @@ function renderLPContent() {
     if (showMsr) {
       const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--muted);font-size:12px">${esc(i.measurements||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('othermaterials',i.id)}</div></td></tr>`;}).join('');
       const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${t('size')}: ${esc(i.measurements||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
-      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${t('measurements')}</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
+      el.innerHTML=breadcrumb+`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${lpSection==='koli'?t('boxSize'):t('measurements')}</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     } else {
       el.innerHTML = breadcrumb + renderItemGrid('othermaterials', items);
     }
@@ -1271,8 +1271,11 @@ function selItemCondition(v, btn) {
 }
 function updateMeasurementsVisibility() {
   const isPoset = editItemSection === 'poset';
+  const isKoli = editItemSection === 'koli';
   document.getElementById('f-condition').style.display = isPoset ? 'none' : '';
-  document.getElementById('f-measurements').style.display = isPoset ? '' : 'none';
+  document.getElementById('f-measurements').style.display = (isPoset || isKoli) ? '' : 'none';
+  const msrLabel = document.querySelector('#f-measurements label');
+  if (msrLabel) msrLabel.textContent = isKoli ? t('boxSize') : t('measurements');
 }
 
 function openItemModal(type, id) {
@@ -1337,7 +1340,7 @@ async function saveItem() {
   if (editType === 'othermaterials') {
     extra.section      = editItemSection   || null;
     extra.condition    = editItemSection === 'poset' ? null : (editItemCondition || null);
-    extra.measurements = editItemSection === 'poset' ? (document.getElementById('i-measurements').value.trim()||null) : null;
+    extra.measurements = (editItemSection === 'poset' || editItemSection === 'koli') ? (document.getElementById('i-measurements').value.trim()||null) : null;
   }
   const btn = document.getElementById('item-save-btn');
   btn.disabled = true; btn.textContent = t('saving');
