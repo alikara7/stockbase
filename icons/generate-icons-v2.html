@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate StockBase Icons</title></head>
+<body style="background:#111;color:#fff;font-family:sans-serif;padding:40px">
+<h2>StockBase Icon Generator — "Sb" Green</h2>
+<p>Right-click each image → Save As</p>
+<div style="display:flex;gap:30px;flex-wrap:wrap;margin-top:20px" id="out"></div>
+<script>
+const sizes = [
+  {name:'apple-touch-icon.png', s:180},
+  {name:'icon-192.png', s:192},
+  {name:'icon-512.png', s:512}
+];
+sizes.forEach(({name,s})=>{
+  const c=document.createElement('canvas');
+  c.width=s; c.height=s;
+  const ctx=c.getContext('2d');
+  // Background rounded rect
+  const r=s*0.22;
+  ctx.beginPath();
+  ctx.moveTo(r,0); ctx.lineTo(s-r,0); ctx.quadraticCurveTo(s,0,s,r);
+  ctx.lineTo(s,s-r); ctx.quadraticCurveTo(s,s,s-r,s);
+  ctx.lineTo(r,s); ctx.quadraticCurveTo(0,s,0,s-r);
+  ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+  ctx.closePath();
+  // Gradient fill
+  const g=ctx.createLinearGradient(0,0,s,s);
+  g.addColorStop(0,'#16a34a');
+  g.addColorStop(1,'#0d7a36');
+  ctx.fillStyle=g;
+  ctx.fill();
+  // Subtle inner glow
+  const g2=ctx.createRadialGradient(s*0.3,s*0.3,0,s*0.5,s*0.5,s*0.7);
+  g2.addColorStop(0,'rgba(255,255,255,0.12)');
+  g2.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=g2;
+  ctx.fill();
+  // Text "Sb"
+  ctx.fillStyle='#ffffff';
+  ctx.font=`800 ${s*0.48}px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('Sb',s/2,s*0.52);
+  // Display
+  const div=document.createElement('div');
+  div.style.textAlign='center';
+  const img=document.createElement('img');
+  img.src=c.toDataURL('image/png');
+  img.style.width='120px';img.style.height='120px';
+  img.style.borderRadius='22px';img.style.border='1px solid #444';
+  div.appendChild(img);
+  const lbl=document.createElement('div');
+  lbl.style.marginTop='8px';lbl.style.fontSize='12px';lbl.style.color='#aaa';
+  lbl.textContent=name+' ('+s+'×'+s+')';
+  div.appendChild(lbl);
+  // Download link
+  const dl=document.createElement('a');
+  dl.href=c.toDataURL('image/png');
+  dl.download=name;
+  dl.textContent='⬇ Download';
+  dl.style.cssText='display:block;margin-top:6px;color:#16a34a;font-size:13px';
+  div.appendChild(dl);
+  document.getElementById('out').appendChild(div);
+});
+</script>
+</body>
+</html>
