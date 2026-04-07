@@ -77,6 +77,28 @@ select:focus{border-color:var(--green);background:var(--surface)}
 .lang-btn{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;letter-spacing:.5px;font-family:'DM Mono',monospace}
 .excel-btn{font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;background:var(--green-l);color:var(--green);border:1.5px solid var(--green)}
 .excel-btn:hover{background:var(--green);color:#fff}
+/* MATERIAL COLOR TAGS */
+.mat-color{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.03em;margin-left:6px;vertical-align:middle}
+.mat-color.mc-seffaf{background:#dbeafe;color:#1d4ed8}
+.mat-color.mc-metalize{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}
+.mat-color.mc-beyaz{background:#f1f5f9;color:#64748b}
+.mat-color.mc-kahve{background:#fed7aa;color:#9a3412}
+.mat-color.mc-siyah{background:#1e293b;color:#f8fafc}
+/* GLOBAL SEARCH */
+.gsearch-wrap{margin-bottom:20px}
+.gsearch-input{width:100%;padding:12px 16px 12px 40px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;box-sizing:border-box;transition:border-color .2s}
+.gsearch-input:focus{outline:none;border-color:var(--green)}
+.gsearch-wrap{position:relative}
+.gsearch-wrap::before{content:'\1F50D';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;z-index:1}
+.gsearch-results{margin-top:8px;border-radius:14px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);overflow:hidden;max-height:60vh;overflow-y:auto}
+.gsr-item{display:flex;align-items:center;padding:10px 14px;gap:10px;cursor:pointer;transition:background .12s}
+.gsr-item:hover{background:var(--surface2)}
+.gsr-item+.gsr-item{border-top:1px solid var(--border)}
+.gsr-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.gsr-body{flex:1;min-width:0}
+.gsr-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gsr-meta{font-size:11px;color:var(--muted)}
+.gsr-qty{font-size:14px;font-weight:700}
 /* MAIN */
 .main{padding:28px;max-width:1360px;margin:0 auto}
 /* STATS */
@@ -494,6 +516,12 @@ html[data-theme="dark"] .list-panel{background:#000}
 
   <div class="main">
 
+    <!-- Global Search -->
+    <div class="gsearch-wrap" id="gsearch-wrap">
+      <input type="text" class="gsearch-input" id="gsearch" placeholder="T\u00fcm \u00fcr\u00fcnlerde ara\u2026" oninput="globalSearch(this.value)">
+      <div class="gsearch-results" id="gsearch-results" style="display:none"></div>
+    </div>
+
     <!-- Welcome Banner -->
     <div class="dw-banner">
       <div>
@@ -673,6 +701,7 @@ const I18N = {
     excelPassword: 'Excel Password', excelPasswordDesc: 'This file is password-protected. Enter the password to continue.',
     excelPasswordPlaceholder: 'Enter Excel password…', excelStart: 'Start Sync',
     excelWrongPassword: 'Wrong password or file could not be read.',
+    globalSearch: 'Search all items…', koliIci: 'Per Box', koliAdet: 'Boxes',
   },
   tr: {
     yurtici: 'Yurt İçi', yurtdisi: 'Yurt Dışı', fabrika: 'Fabrika Stoğu',
@@ -729,6 +758,7 @@ const I18N = {
     excelPassword: 'Excel Şifresi', excelPasswordDesc: 'Bu dosya şifre korumalı. Devam etmek için şifreyi girin.',
     excelPasswordPlaceholder: 'Excel şifresini girin…', excelStart: 'Senkronu Başlat',
     excelWrongPassword: 'Yanlış şifre veya dosya okunamadı.',
+    globalSearch: 'Tüm ürünlerde ara…', koliIci: 'Koli İçi', koliAdet: 'Koli Adet',
   }
 };
 function t(key) { return (I18N[lang] && I18N[lang][key]) || (I18N.en[key]) || key; }
@@ -746,6 +776,8 @@ function setLang(l) {
   Object.entries(tabMap).forEach(([id,key])=>{ const e=document.getElementById('lpt-'+id); if(e) e.textContent=t(key); });
   // Back button
   const bb = document.getElementById('lp-back-dash'); if(bb) bb.textContent = '‹ '+t('dashboard');
+  // Global search placeholder
+  const gsi = document.getElementById('gsearch'); if(gsi) gsi.placeholder = t('globalSearch');
   render();
   if (document.getElementById('list-panel').classList.contains('open')) {
     updateLPTitle();
@@ -784,6 +816,13 @@ function toggleTheme() {
     // Apply saved language to all data-i18n elements on page load
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+    // Close global search dropdown on outside click
+    document.addEventListener('click', e => {
+      const wrap = document.getElementById('gsearch-wrap');
+      if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('gsearch-results').style.display = 'none';
+      }
+    });
   });
 })();
 
@@ -1140,9 +1179,10 @@ function renderLPContent() {
 
   function renderItemGrid(type, items) {
     if (!items.length) return `<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`;
-    const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
-    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
-    return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
+    const isProd = type === 'products';
+    const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td>${isProd?`<td style="color:var(--text2)">${i.koli_ici||0}</td><td style="color:var(--text2)">${i.koli_adet||0}</td>`:''}<td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
+    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid">${isProd?`<div class="ic-field"><label>${t('koliIci')}</label><span>${i.koli_ici||0}</span></div><div class="ic-field"><label>${t('koliAdet')}</label><span>${i.koli_adet||0}</span></div>`:''}<div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
+    return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th>${isProd?`<th>${t('koliIci')}</th><th>${t('koliAdet')}</th>`:''}<th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
   }
 
   // HISTORY
@@ -1224,8 +1264,8 @@ function renderLPContent() {
     let items = materials;
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
-    const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
-    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
+    const rows=items.map(i=>{const s=getStatus(i);const mc=matColorTag(i.name);return`<tr><td style="font-weight:700">${esc(i.name)}${mc}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
+    const cards=items.map(i=>{const s=getStatus(i);const mc=matColorTag(i.name);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}${mc}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
     el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     return;
   }
@@ -1476,6 +1516,83 @@ async function addHistory(action, text) {
   } catch(e) {}
 }
 
+// ─── MATERIAL COLOR TAG ──────────────────────────────────
+function matColorTag(name) {
+  const n = (name || '').toUpperCase();
+  if (n.includes('METALİZE') || n.includes('METALIZE')) return '<span class="mat-color mc-metalize">METALİZE</span>';
+  if (n.includes('ŞEFFAF') || n.includes('SEFFAF') || n.includes('TRANSPARENT')) return '<span class="mat-color mc-seffaf">ŞEFFAF</span>';
+  if (n.includes('SİYAH') || n.includes('SIYAH')) return '<span class="mat-color mc-siyah">SİYAH</span>';
+  if (n.includes('KAHVERENGİ') || n.includes('KAHVERENGI') || n.includes('KAHVE')) return '<span class="mat-color mc-kahve">KAHVE</span>';
+  if (n.includes('BEYAZ') || n.includes('WHITE')) return '<span class="mat-color mc-beyaz">BEYAZ</span>';
+  return '';
+}
+
+// ─── GLOBAL SEARCH ───────────────────────────────────────
+function globalSearch(val) {
+  const box = document.getElementById('gsearch-results');
+  if (!val || val.length < 2) { box.style.display = 'none'; return; }
+  const q = val.toLowerCase();
+  const all = [
+    ...products.map(i => ({ ...i, _type: 'products', _icon: '🗃️', _bg: 'var(--blue-l)', _meta: `${i.company || '—'} · ${i.market === 'yurtici' ? t('yurtici') : i.market === 'yurtdisi' ? t('yurtdisi') : t('fabrika')}` })),
+    ...materials.map(i => ({ ...i, _type: 'materials', _icon: '🌿', _bg: 'var(--green-l)', _meta: `${i.category || '—'} · ${i.supplier || '—'}` })),
+    ...othermaterials.map(i => ({ ...i, _type: 'othermaterials', _icon: i.section === 'koli' ? '📦' : '🛍️', _bg: i.section === 'koli' ? 'var(--brown-l)' : 'var(--teal-l)', _meta: `${i.section === 'koli' ? t('koli') : t('poset')} · ${i.condition || '—'}${i.measurements ? ' · ' + i.measurements : ''}` }))
+  ];
+  const hits = all.filter(i => i.name.toLowerCase().includes(q) || (i.company || '').toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q) || (i.supplier || '').toLowerCase().includes(q) || (i.measurements || '').toLowerCase().includes(q)).slice(0, 15);
+  if (!hits.length) { box.innerHTML = `<div style="padding:16px;text-align:center;font-size:13px;color:var(--muted)">${t('noResults')}</div>`; box.style.display = 'block'; return; }
+  box.innerHTML = hits.map(i => {
+    const s = getStatus(i);
+    return `<div class="gsr-item" onclick="gsrNavigate('${i._type}','${i.id}')">
+      <div class="gsr-icon" style="background:${i._bg}">${i._icon}</div>
+      <div class="gsr-body"><div class="gsr-name">${esc(i.name)}</div><div class="gsr-meta">${i._meta}</div></div>
+      <div class="gsr-qty col-${s.cls}">${i.qty} ${esc(i.unit || '')}</div>
+    </div>`;
+  }).join('');
+  box.style.display = 'block';
+}
+
+function gsrNavigate(type, id) {
+  document.getElementById('gsearch').value = '';
+  document.getElementById('gsearch-results').style.display = 'none';
+  if (type === 'products') {
+    const item = products.find(i => i.id === id);
+    if (item) {
+      lpCurrentTab = 'products';
+      lpMarket = item.market;
+      lpCompany = item.company || '__none__';
+      openListPageDirect();
+    }
+  } else if (type === 'materials') {
+    openListPage('materials');
+  } else {
+    const item = othermaterials.find(i => i.id === id);
+    if (item) {
+      lpCurrentTab = 'othermaterials';
+      lpSection = item.section;
+      lpCondition = item.condition;
+      openListPageDirect();
+    }
+  }
+}
+
+function openListPageDirect() {
+  lpSearchTerm = '';
+  window._lpDrillOptions = [];
+  const srch = document.getElementById('lp-search');
+  if (srch) srch.value = '';
+  updateLPTitle();
+  document.querySelectorAll('.lp-tab').forEach(t => t.classList.remove('active'));
+  const tb = document.getElementById('lpt-' + lpCurrentTab);
+  if (tb) tb.classList.add('active');
+  const addBtn = document.getElementById('lp-add-btn');
+  if (addBtn) {
+    const noAdd = lpCurrentTab === 'lowstock' || lpCurrentTab === 'history';
+    addBtn.style.display = noAdd ? 'none' : '';
+    addBtn.textContent = lpCurrentTab === 'products' ? t('addProduct') : lpCurrentTab === 'materials' ? t('addMaterial') : t('addItem');
+  }
+  document.getElementById('list-panel').classList.add('open');
+  renderLPContent();
+}
+
 // ─── EXCEL SYNC ──────────────────────────────────────────
 function closeExcelOverlay() {
   document.getElementById('excel-overlay').classList.remove('open');
@@ -1560,17 +1677,17 @@ async function doExcelSync(wb) {
 
     // ── Sheet 1: HAZIR MAMUL MÜŞTERİ → products (yurtici) ──
     await syncProductSheet(wb, sheets, 0, 'yurtici', dbProducts, results.products,
-      row => ({ name: cellStr(row, 3), company: cellStr(row, 1), qty: cellNum(row, 7) }),
+      row => ({ name: cellStr(row, 3), company: cellStr(row, 1), qty: cellNum(row, 7), koli_ici: cellNum(row, 5), koli_adet: cellNum(row, 6) }),
       true);
 
     // ── Sheet 2: YÖM HAZIR MAMUL → products (fabrika) ──
     await syncProductSheet(wb, sheets, 1, 'fabrika', dbProducts, results.products,
-      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6) }),
+      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6), koli_ici: cellNum(row, 4), koli_adet: cellNum(row, 5) }),
       false);
 
     // ── Sheet 3: HAZIR MAMUL İHRACAT → products (yurtdisi) ──
     await syncProductSheet(wb, sheets, 2, 'yurtdisi', dbProducts, results.products,
-      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6) }),
+      row => ({ name: cellStr(row, 2), company: cellStr(row, 1), qty: cellNum(row, 6), koli_ici: cellNum(row, 4), koli_adet: cellNum(row, 5) }),
       false);
 
     // ── Sheet 4: BOBİN → materials ──
@@ -1660,8 +1777,8 @@ async function syncProductSheet(wb, sheets, sheetIdx, market, dbProducts, result
     const match = marketProducts.find(p => norm(p.name) === nName && norm(p.company || '') === nComp);
     if (match) {
       result.matched++;
-      if (match.qty !== ex.qty) {
-        await sb.from('products').update({ qty: ex.qty }).eq('id', match.id);
+      if (match.qty !== ex.qty || match.koli_ici !== ex.koli_ici || match.koli_adet !== ex.koli_adet) {
+        await sb.from('products').update({ qty: ex.qty, koli_ici: ex.koli_ici, koli_adet: ex.koli_adet }).eq('id', match.id);
         result.updated++;
       } else {
         result.skipped++;
@@ -1669,7 +1786,7 @@ async function syncProductSheet(wb, sheets, sheetIdx, market, dbProducts, result
     } else if (nName) {
       // New product — insert it
       const unit = hasCodeCol ? cellStr(row, 4) : cellStr(row, 3);
-      await sb.from('products').insert({ id: uid(), name: ex.name, company: ex.company, unit: unit || 'ADET', qty: ex.qty, min: 0, market, category: '' });
+      await sb.from('products').insert({ id: uid(), name: ex.name, company: ex.company, unit: unit || 'ADET', qty: ex.qty, koli_ici: ex.koli_ici, koli_adet: ex.koli_adet, min: 0, market, category: '' });
       result.added++;
     }
   }
