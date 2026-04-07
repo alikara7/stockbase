@@ -669,7 +669,7 @@ const I18N = {
     excelMatched: 'matched', excelUpdated: 'updated', excelNotFound: 'not found in database',
     excelNoData: 'No data found in Excel', excelResults: 'Sync Results',
     excelProducts: 'Products', excelMaterials: 'Raw Materials', excelKoli: 'Box', excelPoset: 'Bag',
-    excelClose: 'Close', excelSkipped: 'skipped (same qty)',
+    excelClose: 'Close', excelSkipped: 'skipped (same qty)', excelAdded: 'new added',
     excelPassword: 'Excel Password', excelPasswordDesc: 'This file is password-protected. Enter the password to continue.',
     excelPasswordPlaceholder: 'Enter Excel password…', excelStart: 'Start Sync',
     excelWrongPassword: 'Wrong password or file could not be read.',
@@ -725,7 +725,7 @@ const I18N = {
     excelMatched: 'eşleşti', excelUpdated: 'güncellendi', excelNotFound: 'veritabanında bulunamadı',
     excelNoData: 'Excel dosyasında veri bulunamadı', excelResults: 'Senkron Sonuçları',
     excelProducts: 'Ürünler', excelMaterials: 'Hammaddeler', excelKoli: 'Koli', excelPoset: 'Poşet',
-    excelClose: 'Kapat', excelSkipped: 'atlandı (aynı miktar)',
+    excelClose: 'Kapat', excelSkipped: 'atlandı (aynı miktar)', excelAdded: 'yeni eklendi',
     excelPassword: 'Excel Şifresi', excelPasswordDesc: 'Bu dosya şifre korumalı. Devam etmek için şifreyi girin.',
     excelPasswordPlaceholder: 'Excel şifresini girin…', excelStart: 'Senkronu Başlat',
     excelWrongPassword: 'Yanlış şifre veya dosya okunamadı.',
@@ -1551,10 +1551,10 @@ async function doExcelSync(wb) {
     const dbMaterials = mRes.data || [];
     const dbOther = oRes.data || [];
 
-    const results = { products: {updated:0, matched:0, notFound:[], skipped:0},
-                      materials: {updated:0, matched:0, notFound:[], skipped:0},
-                      koli: {updated:0, matched:0, notFound:[], skipped:0},
-                      poset: {updated:0, matched:0, notFound:[], skipped:0} };
+    const results = { products: {updated:0, matched:0, notFound:[], skipped:0, added:0},
+                      materials: {updated:0, matched:0, notFound:[], skipped:0, added:0},
+                      koli: {updated:0, matched:0, notFound:[], skipped:0, added:0},
+                      poset: {updated:0, matched:0, notFound:[], skipped:0, added:0} };
 
     showExcelOverlay('⏳', t('excelSync'), `<p style="text-align:center">${t('excelUpdating')}</p>`, false);
 
@@ -1587,6 +1587,7 @@ async function doExcelSync(wb) {
 
     // Show results
     const totalUpdated = results.products.updated + results.materials.updated + results.koli.updated + results.poset.updated;
+    const totalAdded = results.products.added + results.materials.added + results.koli.added + results.poset.added;
     const totalSkipped = results.products.skipped + results.materials.skipped + results.koli.skipped + results.poset.skipped;
 
     let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">`;
@@ -1602,6 +1603,7 @@ async function doExcelSync(wb) {
         <div style="font-size:16px;margin-bottom:4px">${c.icon} ${c.label}</div>
         <div style="font-size:22px;font-weight:800;color:var(--green)">${r.updated}</div>
         <div style="font-size:11px;color:var(--text2)">${t('excelUpdated')}</div>
+        ${r.added ? `<div style="font-size:11px;color:var(--blue)">+${r.added} ${t('excelAdded')}</div>` : ''}
         ${r.skipped ? `<div style="font-size:11px;color:var(--muted)">${r.skipped} ${t('excelSkipped')}</div>` : ''}
       </div>`;
     }
@@ -1620,10 +1622,10 @@ async function doExcelSync(wb) {
         </div></details>`;
     }
 
-    await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalSkipped} skipped`);
+    await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalAdded} added, ${totalSkipped} skipped`);
 
     showExcelOverlay('✅', t('excelSyncDone'), html, true);
-    toast(`${t('excelSyncDone')} — ${totalUpdated} ${t('excelUpdated')}`, 'success', 5000);
+    toast(`${t('excelSyncDone')} — ${totalUpdated} ${t('excelUpdated')}, +${totalAdded} ${t('excelAdded')}`, 'success', 5000);
 
   } catch (err) {
     console.error('Excel sync error:', err);
@@ -1665,7 +1667,10 @@ async function syncProductSheet(wb, sheets, sheetIdx, market, dbProducts, result
         result.skipped++;
       }
     } else if (nName) {
-      result.notFound.push(`${ex.name} (${ex.company || '-'})`);
+      // New product — insert it
+      const unit = hasCodeCol ? cellStr(row, 4) : cellStr(row, 3);
+      await sb.from('products').insert({ id: uid(), name: ex.name, company: ex.company, unit: unit || 'ADET', qty: ex.qty, min: 0, market, category: '' });
+      result.added++;
     }
   }
 }
@@ -1697,7 +1702,9 @@ async function syncMaterialSheet(wb, sheets, sheetIdx, dbMaterials, result) {
         result.skipped++;
       }
     } else if (type) {
-      result.notFound.push(composedName);
+      // New material — insert it
+      await sb.from('materials').insert({ id: uid(), name: composedName, category: type, supplier, unit: 'KG', qty, min: 0 });
+      result.added++;
     }
   }
 }
@@ -1726,7 +1733,12 @@ async function syncKoliSheet(wb, sheets, sheetIdx, dbOther, result) {
         result.skipped++;
       }
     } else if (nName) {
-      result.notFound.push(`${name} (${measurements || '-'})`);
+      // New koli item — insert it
+      const category = cellStr(row, 1);  // C2
+      const usedFor = cellStr(row, 2);   // C3 => condition hint
+      const cond = (usedFor && norm(usedFor).includes('YEN')) ? 'yeni' : 'eski';
+      await sb.from('othermaterials').insert({ id: uid(), name, category: category || 'KOLİ', unit: 'ADET', qty, min: 0, section: 'koli', condition: cond, measurements });
+      result.added++;
     }
   }
 }
@@ -1759,7 +1771,10 @@ async function syncPosetSheet(wb, sheets, sheetIdx, dbOther, result) {
         result.skipped++;
       }
     } else if (nName.length > 3) {
-      result.notFound.push(`${composedName} (${measurements || '-'})`);
+      // New poset item — insert it
+      const color = cellStr(row, 2); // C3 = RENK
+      await sb.from('othermaterials').insert({ id: uid(), name: composedName, category: category || 'POŞET', unit: 'KG', qty, min: 0, section: 'poset', condition: 'yeni', measurements });
+      result.added++;
     }
   }
 }
