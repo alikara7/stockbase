@@ -1541,7 +1541,13 @@ function globalSearch(val) {
     ...materials.map(i => ({ ...i, _type: 'materials', _icon: '🌿', _bg: 'var(--green-l)', _meta: `${i.category || '—'} · ${i.supplier || '—'}` })),
     ...othermaterials.map(i => ({ ...i, _type: 'othermaterials', _icon: i.section === 'koli' ? '📦' : '🛍️', _bg: i.section === 'koli' ? 'var(--brown-l)' : 'var(--teal-l)', _meta: `${i.section === 'koli' ? t('koli') : t('poset')} · ${i.condition || '—'}${i.measurements ? ' · ' + i.measurements : ''}` }))
   ];
-  const hits = all.filter(i => i.name.toLowerCase().includes(q) || (i.company || '').toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q) || (i.supplier || '').toLowerCase().includes(q) || (i.measurements || '').toLowerCase().includes(q)).slice(0, 15);
+  let hits = all.filter(i => i.name.toLowerCase().includes(q) || (i.company || '').toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q) || (i.supplier || '').toLowerCase().includes(q) || (i.measurements || '').toLowerCase().includes(q));
+  // Öncelik: başında başlayanlar > içinde geçenler
+  hits = [
+    ...hits.filter(i => i.name.toLowerCase().startsWith(q)),
+    ...hits.filter(i => !i.name.toLowerCase().startsWith(q))
+  ];
+  hits = hits.slice(0, 100);
   if (!hits.length) { box.innerHTML = `<div style="padding:16px;text-align:center;font-size:13px;color:var(--muted)">${t('noResults')}</div>`; box.style.display = 'block'; return; }
   box.innerHTML = hits.map(i => {
     const s = getStatus(i);
