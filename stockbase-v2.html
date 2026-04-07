@@ -77,19 +77,23 @@ select:focus{border-color:var(--green);background:var(--surface)}
 .lang-btn{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;letter-spacing:.5px;font-family:'DM Mono',monospace}
 .excel-btn{font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;background:var(--green-l);color:var(--green);border:1.5px solid var(--green)}
 .excel-btn:hover{background:var(--green);color:#fff}
-/* MATERIAL COLOR TAGS */
-.mat-color{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.03em;margin-left:6px;vertical-align:middle}
-.mat-color.mc-seffaf{background:#dbeafe;color:#1d4ed8}
-.mat-color.mc-metalize{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}
-.mat-color.mc-beyaz{background:#f1f5f9;color:#64748b}
-.mat-color.mc-kahve{background:#fed7aa;color:#9a3412}
-.mat-color.mc-siyah{background:#1e293b;color:#f8fafc}
+/* MATERIAL ROW COLORS */
+tr.mc-seffaf{background:rgba(59,130,246,.08)}
+tr.mc-metalize{background:rgba(245,158,11,.10)}
+tr.mc-beyaz{background:rgba(148,163,184,.08)}
+tr.mc-kahve{background:rgba(180,83,9,.08)}
+tr.mc-siyah{background:rgba(30,41,59,.10)}
+.item-card.mc-seffaf{border-left:4px solid #3b82f6}
+.item-card.mc-metalize{border-left:4px solid #f59e0b}
+.item-card.mc-beyaz{border-left:4px solid #94a3b8}
+.item-card.mc-kahve{border-left:4px solid #b45309}
+.item-card.mc-siyah{border-left:4px solid #334155}
 /* GLOBAL SEARCH */
 .gsearch-wrap{margin-bottom:20px}
 .gsearch-input{width:100%;padding:12px 16px 12px 40px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;box-sizing:border-box;transition:border-color .2s}
 .gsearch-input:focus{outline:none;border-color:var(--green)}
 .gsearch-wrap{position:relative}
-.gsearch-wrap::before{content:'\1F50D';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;z-index:1}
+.gsearch-wrap::before{content:'\1F50E\FE0E';position:absolute;left:14px;top:13px;font-size:16px;pointer-events:none;z-index:1;line-height:1;opacity:.5}
 .gsearch-results{margin-top:8px;border-radius:14px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);overflow:hidden;max-height:60vh;overflow-y:auto}
 .gsr-item{display:flex;align-items:center;padding:10px 14px;gap:10px;cursor:pointer;transition:background .12s}
 .gsr-item:hover{background:var(--surface2)}
@@ -1264,8 +1268,8 @@ function renderLPContent() {
     let items = materials;
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
-    const rows=items.map(i=>{const s=getStatus(i);const mc=matColorTag(i.name);return`<tr><td style="font-weight:700">${esc(i.name)}${mc}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
-    const cards=items.map(i=>{const s=getStatus(i);const mc=matColorTag(i.name);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}${mc}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
+    const rows=items.map(i=>{const s=getStatus(i);const mc=matColorClass(i.name);return`<tr class="${mc}"><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
+    const cards=items.map(i=>{const s=getStatus(i);const mc=matColorClass(i.name);return`<div class="item-card ${mc}"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('materials',i.id)}</div></div>`;}).join('');
     el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     return;
   }
@@ -1517,13 +1521,13 @@ async function addHistory(action, text) {
 }
 
 // ─── MATERIAL COLOR TAG ──────────────────────────────────
-function matColorTag(name) {
+function matColorClass(name) {
   const n = (name || '').toUpperCase();
-  if (n.includes('METALİZE') || n.includes('METALIZE')) return '<span class="mat-color mc-metalize">METALİZE</span>';
-  if (n.includes('ŞEFFAF') || n.includes('SEFFAF') || n.includes('TRANSPARENT')) return '<span class="mat-color mc-seffaf">ŞEFFAF</span>';
-  if (n.includes('SİYAH') || n.includes('SIYAH')) return '<span class="mat-color mc-siyah">SİYAH</span>';
-  if (n.includes('KAHVERENGİ') || n.includes('KAHVERENGI') || n.includes('KAHVE')) return '<span class="mat-color mc-kahve">KAHVE</span>';
-  if (n.includes('BEYAZ') || n.includes('WHITE')) return '<span class="mat-color mc-beyaz">BEYAZ</span>';
+  if (n.includes('METALİZE') || n.includes('METALIZE')) return 'mc-metalize';
+  if (n.includes('ŞEFFAF') || n.includes('SEFFAF') || n.includes('TRANSPARENT')) return 'mc-seffaf';
+  if (n.includes('SİYAH') || n.includes('SIYAH')) return 'mc-siyah';
+  if (n.includes('KAHVERENGİ') || n.includes('KAHVERENGI') || n.includes('KAHVE')) return 'mc-kahve';
+  if (n.includes('BEYAZ') || n.includes('WHITE')) return 'mc-beyaz';
   return '';
 }
 
