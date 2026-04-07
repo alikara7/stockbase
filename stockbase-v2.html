@@ -78,16 +78,16 @@ select:focus{border-color:var(--green);background:var(--surface)}
 .excel-btn{font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;background:var(--green-l);color:var(--green);border:1.5px solid var(--green)}
 .excel-btn:hover{background:var(--green);color:#fff}
 /* MATERIAL ROW COLORS */
-tr.mc-seffaf{background:rgba(59,130,246,.08)}
-tr.mc-metalize{background:rgba(245,158,11,.10)}
-tr.mc-beyaz{background:rgba(148,163,184,.08)}
-tr.mc-kahve{background:rgba(180,83,9,.08)}
-tr.mc-siyah{background:rgba(30,41,59,.10)}
-.item-card.mc-seffaf{border-left:4px solid #3b82f6}
-.item-card.mc-metalize{border-left:4px solid #f59e0b}
-.item-card.mc-beyaz{border-left:4px solid #94a3b8}
-.item-card.mc-kahve{border-left:4px solid #b45309}
-.item-card.mc-siyah{border-left:4px solid #334155}
+tr.mc-seffaf{background:rgba(59,130,246,.18)}
+tr.mc-metalize{background:rgba(245,158,11,.20)}
+tr.mc-beyaz{background:rgba(148,163,184,.16)}
+tr.mc-kahve{background:rgba(180,83,9,.18)}
+tr.mc-siyah{background:rgba(30,41,59,.22)}
+.item-card.mc-seffaf{border-left:4px solid #3b82f6;background:rgba(59,130,246,.08)}
+.item-card.mc-metalize{border-left:4px solid #f59e0b;background:rgba(245,158,11,.08)}
+.item-card.mc-beyaz{border-left:4px solid #94a3b8;background:rgba(148,163,184,.06)}
+.item-card.mc-kahve{border-left:4px solid #b45309;background:rgba(180,83,9,.08)}
+.item-card.mc-siyah{border-left:4px solid #334155;background:rgba(30,41,59,.10)}
 /* GLOBAL SEARCH */
 .gsearch-wrap{margin-bottom:20px}
 .gsearch-input{width:100%;padding:12px 16px 12px 40px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;box-sizing:border-box;transition:border-color .2s}
@@ -161,7 +161,7 @@ tbody tr:hover td{background:rgba(22,163,74,.03)}
 .h-row:first-child{border-top:none}
 .h-row:hover{background:rgba(22,163,74,.03)}
 .h-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.h-dot.add{background:var(--green)} .h-dot.update{background:var(--blue)} .h-dot.delete{background:var(--danger)}
+.h-dot.add{background:var(--green)} .h-dot.update{background:var(--blue)} .h-dot.delete{background:var(--danger)} .h-dot.excel-sync{background:var(--purple)}
 .h-text{font-size:13px;line-height:1.5} .h-time{font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace}
 /* EMPTY */
 .empty{padding:48px;text-align:center;color:var(--muted);font-size:13px;font-weight:500}
@@ -993,8 +993,8 @@ function renderDashboardPreviews() {
                ...othermaterials.map(i=>({...i,_type:'othermaterials'}))];
   const lowItems = all.filter(i=>i.qty<=i.min).sort((a,b)=>a.qty-b.qty).slice(0,3);
   const recentH  = history.slice(0,3);
-  const actionIcon = a => a==='add'?'➕':a==='update'?'✏️':a==='delete'?'🗑️':'🕒';
-  const actionColor= a => a==='add'?'green':a==='delete'?'red':'teal';
+  const actionIcon = a => a==='add'?'➕':a==='update'?'✏️':a==='delete'?'🗑️':a==='excel-sync'?'📊':'🕒';
+  const actionColor= a => a==='add'?'green':a==='delete'?'red':a==='excel-sync'?'purple':'teal';
 
   function buildRow(icon, iconColor, name, meta, rightVal, rightColor, fn) {
     return `<div class="preview-row" onclick="${fn}">
@@ -1703,9 +1703,6 @@ async function doExcelSync(wb) {
     // ── Sheet 6: POŞET → othermaterials (poset) ──
     await syncPosetSheet(wb, sheets, 5, dbOther, results.poset);
 
-    // Reload data
-    await loadAll();
-
     // Show results
     const totalUpdated = results.products.updated + results.materials.updated + results.koli.updated + results.poset.updated;
     const totalAdded = results.products.added + results.materials.added + results.koli.added + results.poset.added;
@@ -1744,6 +1741,9 @@ async function doExcelSync(wb) {
     }
 
     await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalAdded} added, ${totalSkipped} skipped`);
+
+    // Reload data (after history insert so it appears immediately)
+    await loadAll();
 
     showExcelOverlay('✅', t('excelSyncDone'), html, true);
     toast(`${t('excelSyncDone')} — ${totalUpdated} ${t('excelUpdated')}, +${totalAdded} ${t('excelAdded')}`, 'success', 5000);
