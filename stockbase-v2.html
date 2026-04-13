@@ -635,7 +635,14 @@ html[data-theme="dark"] .list-panel{background:#000}
 <script>
 const SUPABASE_URL = 'https://rvkctesflmkyxfrqeuyd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_SA__NpN_8UrWyLk3LO5GIA_C9bCUVGW';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let sb;
+try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.warn('Supabase SDK not loaded, retrying...'); }
+if (!sb) {
+  // Retry after a short delay (CDN may still be loading)
+  document.addEventListener('DOMContentLoaded', () => {
+    try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.error('Supabase unavailable'); }
+  });
+}
 const USERS = {
   'ismail': { pin: '7392', role: 'manager' },
   'ali':    { pin: '4851', role: 'manager' },
