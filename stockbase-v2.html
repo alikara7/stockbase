@@ -871,12 +871,26 @@ function normalizeUnit(raw) {
 }
 
 /**
+ * Normalize micron notation variants inside a material name.
+ * "Aµ", "Au", "Aμ" (any case) after a digit → "µ" (micro sign U+00B5)
+ * Also standalone μ (Greek mu) → µ (micro sign) for consistency.
+ */
+function normalizeMicronInName(name) {
+  if (!name) return name;
+  return String(name)
+    .replace(/(\d\s*)[Aa][µμuU]/g, '$1µ')   // "33 Aµ" / "33 Au" → "33 µ"
+    .replace(/(\d\s*)[μuU](?=\s|$)/g, '$1µ') // "33 u" / "33 μ" → "33 µ"
+    .replace(/[μ]/g, 'µ');                     // any remaining Greek mu → micro sign
+}
+
+/**
  * Return a canonical comparison key for an item name (for deduplication).
+ * - Normalizes micron variants (Aµ, Au, μ → µ)
  * - Trims whitespace, lowercases, NFC normalizes, collapses internal spaces.
  */
 function normalizeItemKey(name) {
   if (!name) return '';
-  return String(name).normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+  return normalizeMicronInName(String(name)).normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
 // ─── AUTH ────────────────────────────────────────────────
@@ -1438,7 +1452,9 @@ function openItemModal(type, id) {
 function closeItemModal() { document.getElementById('item-overlay').classList.remove('open'); }
 
 async function saveItem() {
-  const name = document.getElementById('i-name').value.trim();
+  // Normalize micron notation in name (e.g. "33 Aµ" → "33 µ") for materials
+  const rawName = document.getElementById('i-name').value.trim();
+  const name = editType === 'materials' ? normalizeMicronInName(rawName) : rawName;
   const cat  = document.getElementById('i-cat').value.trim();
   const qty  = parseFloat(document.getElementById('i-qty').value) || 0;
   // Normalize unit on save: 'Au', 'au', 'µ', 'μ', 'u' all become 'U'
@@ -1667,7 +1683,12 @@ function showExcelOverlay(icon, title, bodyHtml, showClose) {
   document.getElementById('excel-overlay').classList.add('open');
 }
 
-function norm(s) { return (s || '').toString().trim().toUpperCase().replace(/\s+/g, ' '); }
+function norm(s) {
+  let v = (s || '').toString().trim().toUpperCase().replace(/\s+/g, ' ');
+  // Normalize micron variants: Aµ/AU/Aμ after digit → µ; standalone μ/U → µ
+  v = v.replace(/(\d\s*)[Aa]?[µμU]/g, '$1µ');
+  return v;
+}
 
 let _excelFileData = null;
 
@@ -1867,8 +1888,8 @@ async function syncMaterialSheet(wb, sheets, sheetIdx, dbMaterials, result) {
 
     if (!type) continue;
 
-    // Compose name same way as original import: TYPE - COLOR - WIDTH mm - MICRON µ
-    const composedName = `${type} - ${color} - ${width} mm - ${micron} µ`;
+    // Compose name: TYPE - COLOR - WIDTH mm - MICRON µ (always use µ micro sign)
+    const composedName = normalizeMicronInName(`${type} - ${color} - ${width} mm - ${micron} µ`);
     const nName = norm(composedName);
 
     const match = dbMaterials.find(m => norm(m.name) === nName);
