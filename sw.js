@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stockbase-v6';
+const CACHE_NAME = 'stockbase-v7';
 const PRECACHE = [
   './stockbase-v2.html',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap'

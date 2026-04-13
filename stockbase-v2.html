@@ -879,9 +879,10 @@ function normalizeUnit(raw) {
 function normalizeMicronInName(name) {
   if (!name) return name;
   return String(name)
-    .replace(/(\d\s*)[Aa][µμuU]/g, '$1µ')   // "33 Aµ" / "33 Au" → "33 µ"
-    .replace(/(\d\s*)[μuU](?=\s|$)/g, '$1µ') // "33 u" / "33 μ" → "33 µ"
-    .replace(/[μ]/g, 'µ');                     // any remaining Greek mu → micro sign
+    .replace(/Âµ/g, 'µ')                          // fix UTF-8 double-encoding: Âµ → µ
+    .replace(/(\d\s*)[AaÂâ][µμuU]/g, '$1µ')      // "33 Aµ"/"33 Âµ"/"33 Au" → "33 µ"
+    .replace(/(\d\s*)[μuU](?=\s|$)/g, '$1µ')      // "33 u" / "33 μ" → "33 µ"
+    .replace(/[μ]/g, 'µ');                          // any remaining Greek mu → micro sign
 }
 
 /**
@@ -1686,8 +1687,10 @@ function showExcelOverlay(icon, title, bodyHtml, showClose) {
 
 function norm(s) {
   let v = (s || '').toString().trim().toUpperCase().replace(/\s+/g, ' ');
-  // Normalize micron variants: Aµ/AU/Aμ after digit → µ; standalone μ/U → µ
-  v = v.replace(/(\d\s*)[Aa]?[µμU]/g, '$1µ');
+  // Fix UTF-8 double-encoding first: Âµ → µ
+  v = v.replace(/\u00c2\u00b5/gi, 'µ').replace(/Âµ/gi, 'µ');
+  // Normalize micron variants: Aµ/Âµ/AU/Aμ after digit → µ; standalone μ/U → µ
+  v = v.replace(/(\d\s*)[AaÂâ]?[µμU]/g, '$1µ');
   return v;
 }
 
