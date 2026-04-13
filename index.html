@@ -1183,14 +1183,20 @@ function renderLPContent() {
 
   // RAW MATERIALS — show supplier in table
   if (lpCurrentTab === 'materials') {
-    // Deduplicate by name — keep only the first occurrence of each item name
-    const _seen = new Set();
-    let items = materials.filter(i => {
+    // Deduplicate by name: for each unique name, prefer unit 'U' over others (e.g. 'Au')
+    const _byName = {};
+    materials.forEach(i => {
       const key = (i.name || '').trim().toLowerCase();
-      if (_seen.has(key)) return false;
-      _seen.add(key);
-      return true;
+      if (!_byName[key]) {
+        _byName[key] = i;
+      } else {
+        // Replace if this one has unit 'U' and the stored one doesn't
+        if ((i.unit || '').trim() === 'U' && (_byName[key].unit || '').trim() !== 'U') {
+          _byName[key] = i;
+        }
+      }
     });
+    let items = Object.values(_byName);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
