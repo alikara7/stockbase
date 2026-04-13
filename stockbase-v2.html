@@ -857,6 +857,28 @@ function setSync(state, text) {
   document.getElementById('stxt').textContent = text;
 }
 
+// ─── NORMALIZATION HELPERS ───────────────────────────────
+/**
+ * Normalize unit strings to a canonical form.
+ * "Au", "AU", "au", "µ", "μ", "u" → "U"  (all mean micron in this system)
+ * Everything else is trimmed and returned as-is.
+ */
+function normalizeUnit(raw) {
+  if (raw == null) return raw;
+  const s = String(raw).trim();
+  if (/^[Aa]?[uUµμ]$/.test(s)) return 'U';
+  return s;
+}
+
+/**
+ * Return a canonical comparison key for an item name (for deduplication).
+ * - Trims whitespace, lowercases, NFC normalizes, collapses internal spaces.
+ */
+function normalizeItemKey(name) {
+  if (!name) return '';
+  return String(name).normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
 // ─── AUTH ────────────────────────────────────────────────
 function selRole(r, btn) {
   role = r;
@@ -1264,7 +1286,19 @@ function renderLPContent() {
 
   // RAW MATERIALS — show supplier in table
   if (lpCurrentTab === 'materials') {
-    let items = materials;
+    // Deduplicate by normalized name; prefer unit 'U' (canonical micron) over 'Au' etc.
+    const _byName = {};
+    materials.forEach(i => {
+      const key = normalizeItemKey(i.name);
+      if (!_byName[key]) {
+        _byName[key] = i;
+      } else {
+        if (normalizeUnit(i.unit) === 'U' && normalizeUnit(_byName[key].unit) !== 'U') {
+          _byName[key] = i;
+        }
+      }
+    });
+    let items = Object.values(_byName);
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);const mc=matColorClass(i.name);return`<tr class="${mc}"><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
@@ -1407,7 +1441,8 @@ async function saveItem() {
   const name = document.getElementById('i-name').value.trim();
   const cat  = document.getElementById('i-cat').value.trim();
   const qty  = parseFloat(document.getElementById('i-qty').value) || 0;
-  const unit = document.getElementById('i-unit').value.trim();
+  // Normalize unit on save: 'Au', 'au', 'µ', 'μ', 'u' all become 'U'
+  const unit = normalizeUnit(document.getElementById('i-unit').value);
   const min  = parseFloat(document.getElementById('i-min').value) || 0;
   if (!name) { toast(lang==='tr'?'Lütfen öğe adını girin':'Please enter item name', 'error'); return; }
   const extra = {};
@@ -1425,6 +1460,18 @@ async function saveItem() {
   }
   const btn = document.getElementById('item-save-btn');
   btn.disabled = true; btn.textContent = t('saving');
+  // Duplicate guard: block adding a new material if normalized name already exists
+  if (!editId && editType === 'materials') {
+    const newKey = normalizeItemKey(name);
+    const exists = materials.some(m => normalizeItemKey(m.name) === newKey);
+    if (exists) {
+      toast(lang==='tr'
+        ? 'Bu isimde bir hammadde zaten mevcut'
+        : 'A material with this name already exists', 'error');
+      btn.disabled = false; btn.textContent = t('saveItem');
+      return;
+    }
+  }
   try {
     if (editId) {
       const old = getList(editType).find(i => i.id === editId);
