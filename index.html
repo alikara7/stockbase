@@ -620,30 +620,30 @@ const I18N = {
     welcome: 'Welcome back,', overview: "Here's an overview of your inventory.",
     finishedProducts: 'Finished Products', rawMaterials: 'Raw Materials',
     otherMaterials: 'Other Materials', lowStock: 'Low Stock', lastUpdate: 'Last Update',
-    inStock: 'items in stock', tracked: 'items tracked', needRestock: 'need restocking',
-    by: 'by', browse: 'Browse', history: 'History', recentActivity: 'Recent Activity',
-    seeAll: 'See all →', dashboard: 'Dashboard',
+    inStock: 'items in stock', tracked: 'takip edilen', needRestock: 'yeniden stoklanmalı',
+    by: 'by', browse: 'Gözat', history: 'Geçmiş', recentActivity: 'Recent Activity',
+    seeAll: 'Tümünü gör →', dashboard: 'Panel',
     tabProducts: '🗃️ Products', tabMaterials: '🌿 Raw Materials', tabOther: '📦 Other',
     tabLowStock: '⚠️ Low Stock', tabHistory: '📋 History',
-    market: 'Market', company: 'Company', supplier: 'Supplier', section: 'Section',
-    condition: 'Condition', companyName: 'Company name…', supplierName: 'Supplier name…',
-    egMeasure: 'e.g. 30x40 cm', addItemTitle: 'Add Item', editItemTitle: 'Edit Item',
-    itemName: 'Item Name', category: 'Category', quantity: 'Quantity',
-    unit: 'Unit', minStock: 'Min Stock Threshold', saveItem: 'Save Item',
-    cancel: 'Cancel', updateStock: 'Update Stock', currentStock: 'Current Stock',
-    setExact: 'Set exact quantity', addStockOpt: 'Add stock (receiving goods)',
-    removeStockOpt: 'Remove stock (used / shipped)', amount: 'Amount',
-    deleteItem: 'Delete Item?', cannotUndo: 'This action cannot be undone.',
-    deleteBtn: 'Delete', action: 'Action',
-    logOut: 'Log Out', logOutQ: 'Log Out?', logOutDesc: 'You will need to enter your PIN again to access the system.',
-    username: 'Username', pinCode: 'Pin Code', enterSystem: 'Enter System',
-    enterUsername: 'Please enter your username', unknownUser: 'Unknown username', wrongPin: 'Incorrect pin',
-    saving: 'Saving…', itemUpdated: 'Item updated', itemAdded: 'Item added', itemDeleted: 'Item deleted',
-    saveFailed: 'Save failed — check connection', updateFailed: 'Update failed', deleteFailed: 'Delete failed',
-    stockUpdated: 'Stock updated', connectionError: 'Connection error',
-    deleteItemQ: 'Delete Item?', permRemoved: 'will be permanently removed.',
-    clearHistoryQ: 'Clear History?', clearHistoryDesc: 'All movement history will be deleted permanently.',
-    clearAll: 'Clear All', historyCleared: 'History cleared', clearHistoryFailed: 'Failed to clear history',
+    market: 'Piyasa', company: 'Firma', supplier: 'Tedarikçi', section: 'Bölüm',
+    condition: 'Durum', companyName: 'Firma adı…', supplierName: 'Tedarikçi adı…',
+    egMeasure: 'örn. 30x40 cm', addItemTitle: 'Add Item', editItemTitle: 'Edit Item',
+    itemName: 'Öğe Adı', category: 'Kategori', quantity: 'Miktar',
+    unit: 'Birim', minStock: 'Minimum Stok Eşiği', saveItem: 'Kaydet',
+    cancel: 'İptal', updateStock: 'Stok Güncelle', currentStock: 'Mevcut Stok',
+    setExact: 'Tam miktar belirle', addStockOpt: 'Stok ekle (mal alım)',
+    removeStockOpt: 'Stok çıkar (kullanım / sevkiyat)', amount: 'Miktar',
+    deleteItem: 'Öğeyi Sil?', cannotUndo: 'Bu işlem geri alınamaz.',
+    deleteBtn: 'Sil', action: 'İşlem',
+    logOut: 'Çıkış Yap', logOutQ: 'Çıkış Yap?', logOutDesc: 'Sisteme tekrar erişmek için PIN girmeniz gerekecek.',
+    username: 'Kullanıcı Adı', pinCode: 'Pin Kodu', enterSystem: 'Giriş Yap',
+    enterUsername: 'Lütfen kullanıcı adınızı girin', unknownUser: 'Bilinmeyen kullanıcı', wrongPin: 'Yanlış pin',
+    saving: 'Kaydediliyor…', itemUpdated: 'Öğe güncellendi', itemAdded: 'Öğe eklendi', itemDeleted: 'Öğe silindi',
+    saveFailed: 'Kayıt başarısız — bağlantıyı kontrol edin', updateFailed: 'Güncelleme başarısız', deleteFailed: 'Silme başarısız',
+    stockUpdated: 'Stok güncellendi', connectionError: 'Bağlantı hatası',
+    deleteItemQ: 'Öğeyi Sil?', permRemoved: 'kalıcı olarak silinecek.',
+    clearHistoryQ: 'Geçmişi Temizle?', clearHistoryDesc: 'Tüm hareket geçmişi kalıcı olarak silinecek.',
+    clearAll: 'Tümünü Temizle', historyCleared: 'Geçmiş temizlendi', clearHistoryFailed: 'Geçmiş temizlenemedi',
   },
   tr: {
     yurtici: 'Yurt İçi', yurtdisi: 'Yurt Dışı', fabrika: 'Fabrika Stoğu',
@@ -838,7 +838,7 @@ async function loadAll() {
       sb.from('products').select('*').order('name'),
       sb.from('materials').select('*').order('name'),
       sb.from('othermaterials').select('*').order('name'),
-      sb.from('history').select('*').order('time', { ascending: false })
+      sb.from('history').select('*').order('ts', { ascending: false })
     ]);
     if (p.error || m.error || o.error || h.error) throw new Error();
     products = p.data || []; materials = m.data || [];
@@ -908,7 +908,7 @@ function renderDashboardPreviews() {
   const all = [...products.map(i=>({...i,_type:'products'})),
                ...materials.map(i=>({...i,_type:'materials'})),
                ...othermaterials.map(i=>({...i,_type:'othermaterials'}))];
-  const lowItems = all.filter(i=>i.qty<=i.min).sort((a,b)=>a.qty-b.qty).slice(0,3);
+  const lowItems = all.filter(i=>i.qty<=i.min).sort((a,b)=>a qty-b qty).slice(0,3);
   const recentH  = history.slice(0,3);
   const actionIcon = a => a==='add'?'➕':a==='update'?'✏️':a==='delete'?'🗑️':'🕒';
   const actionColor= a => a==='add'?'green':a==='delete'?'red':'teal';
@@ -1101,13 +1101,15 @@ function renderLPContent() {
   function renderItemGrid(type, items) {
     if (!items.length) return `<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`;
     const rows = items.map(i => { const s=getStatus(i); return `<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(type,i.id)}</div></td></tr>`; }).join('');
-    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(type,i.id)}</div></div>`; }).join('');
+    const cards = items.map(i => { const s=getStatus(i); return `<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`; }).join('');
     return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
   }
 
   // HISTORY
   if (lpCurrentTab === 'history') {
-    const f = lpSearchTerm ? history.filter(h=>(h.text||'').toLowerCase().includes(lpSearchTerm)||(h.username||'').toLowerCase().includes(lpSearchTerm)) : history;
+    let f = lpSearchTerm ? history.filter(h=>(h.text||'').toLowerCase().includes(lpSearchTerm)||(h.username||'').toLowerCase().includes(lpSearchTerm)) : history;
+    // Sort by ts descending if present, fallback to time
+    f = f.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
     if (!f.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noHistoryYet')}</div>`; return; }
     el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} — ${t('by')} ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">${t('clearHistory')}</button></div>`:'');
     return;
@@ -1120,7 +1122,7 @@ function renderLPContent() {
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">✅ ${lpSearchTerm?t('noResults'):t('allStocked')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns(i._type,i.id)}</div></td></tr>`;}).join('');
-    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns(i._type,i.id)}</div></div>`;}).join('');
+    const cards=items.map(i=>{const s=getStatus(i);return`<div class="item-card"><div class="ic-top"><div><div class="ic-name">${esc(i.name)}</div><div class="ic-cat">${esc(i.category||'—')}${i.supplier?' · '+esc(i.supplier):''}</div></div><span class="pill ${s.pill}">${s.label}</span></div><div class="ic-mid"><div class="ic-field"><label>QTY</label><span class="col-${s.cls}">${i.qty}</span></div><div class="ic-field"><label>UNIT</label><span>${esc(i.unit||'—')}</span></div><div class="ic-field"><label>MIN</label><span>${i.min}</span></div></div><div class="ic-actions">${actBtns('othermaterials',i.id)}</div></div>`;}).join('');
     el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Unit</th><th>Min</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-list">${cards}</div>`;
     return;
   }
@@ -1181,7 +1183,14 @@ function renderLPContent() {
 
   // RAW MATERIALS — show supplier in table
   if (lpCurrentTab === 'materials') {
-    let items = materials;
+    // Deduplicate by name — keep only the first occurrence of each item name
+    const _seen = new Set();
+    let items = materials.filter(i => {
+      const key = (i.name || '').trim().toLowerCase();
+      if (_seen.has(key)) return false;
+      _seen.add(key);
+      return true;
+    });
     if (lpSearchTerm) items=items.filter(i=>i.name.toLowerCase().includes(lpSearchTerm)||(i.category||'').toLowerCase().includes(lpSearchTerm)||(i.supplier||'').toLowerCase().includes(lpSearchTerm));
     if (!items.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noItemsYet')}</div>`; return; }
     const rows=items.map(i=>{const s=getStatus(i);return`<tr><td style="font-weight:700">${esc(i.name)}</td><td style="color:var(--text2)">${esc(i.category||'—')}</td><td style="color:var(--muted);font-size:12px">${esc(i.supplier||'—')}</td><td class="col-${s.cls}" style="font-size:15px">${i.qty}</td><td style="color:var(--text2)">${esc(i.unit||'—')}</td><td style="color:var(--muted)">${i.min}</td><td><span class="pill ${s.pill}">${s.label}</span></td><td><div class="acts">${actBtns('materials',i.id)}</div></td></tr>`;}).join('');
@@ -1377,7 +1386,8 @@ async function saveUpdate() {
   const { type, id } = updTarget;
   const item = getList(type).find(i => i.id === id);
   const oldQty = item.qty;
-  const newQty = action === 'set' ? amount : action === 'add' ? oldQty + amount : Math.max(0, oldQty - amount);
+  const newQty = action === 'set' ? amount : action === 'add'
+    ? oldQty + amount : Math.max(0, oldQty - amount);
   try {
     await sb.from(type).update({ qty: newQty }).eq('id', id);
     const desc = action === 'set' ? `set to ${newQty}` : action === 'add'
@@ -1428,8 +1438,9 @@ async function addHistory(action, text) {
   const loc = lang === 'tr' ? 'tr-TR' : 'en-US';
   const time = now.toLocaleDateString(loc) + ' ' +
     now.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+  const ts = now.getTime();
   try {
-    await sb.from('history').insert({ id: uid(), action, text, time, username: userName });
+    await sb.from('history').insert({ id: uid(), action, text, time, ts, username: userName });
   } catch(e) {}
 }
 
