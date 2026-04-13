@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stockbase-v14';
+const CACHE_NAME = 'stockbase-v15';
 const PRECACHE = [
   './stockbase-v2.html',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',

@@ -917,12 +917,12 @@ function doLogin() {
   const pin     = document.getElementById('l-pin').value.trim();
   const err     = document.getElementById('l-err');
   if (!nameRaw) { err.textContent = t('enterUsername'); return; }
-  const user = USERS[nameRaw.toLowerCase()];
+  const user = USERS[nameRaw.toLocaleLowerCase('tr')];
   if (!user) { err.textContent = t('unknownUser'); return; }
   if (pin !== user.pin) { err.textContent = t('wrongPin'); return; }
   err.textContent = '';
   role = user.role;
-  const name = nameRaw.charAt(0).toUpperCase() + nameRaw.slice(1).toLowerCase();
+  const name = nameRaw.charAt(0).toLocaleUpperCase('tr') + nameRaw.slice(1).toLocaleLowerCase('tr');
   userName = name;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
