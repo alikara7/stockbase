@@ -968,11 +968,11 @@ async function loadAll() {
       sb.from('products').select('*').order('name'),
       sb.from('materials').select('*').order('name'),
       sb.from('othermaterials').select('*').order('name'),
-      sb.from('history').select('*').order('time', { ascending: false })
+      sb.from('history').select('*').order('ts', { ascending: false })
     ]);
     if (p.error || m.error || o.error || h.error) throw new Error();
     products = p.data || []; materials = m.data || [];
-    othermaterials = o.data || []; history = h.data || [];
+    othermaterials = o.data || []; history = (h.data || []).sort((a,b)=>(b.ts||0)-(a.ts||0));
     setSync('ok', 'live');
     render();
   } catch(e) {
@@ -1240,7 +1240,7 @@ function renderLPContent() {
   if (lpCurrentTab === 'history') {
     const f = lpSearchTerm ? history.filter(h=>(h.text||'').toLowerCase().includes(lpSearchTerm)||(h.username||'').toLowerCase().includes(lpSearchTerm)) : history;
     if (!f.length) { el.innerHTML=`<div class="empty">${lpSearchTerm?t('noResults'):t('noHistoryYet')}</div>`; return; }
-    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${esc(h.text)}</div><div class="h-time">${h.time} — ${t('by')} ${esc(h.username)}</div></div></div>`).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">${t('clearHistory')}</button></div>`:'');
+    el.innerHTML = `<div class="table-wrap history-wrap"><div>${f.slice(0,200).map(h=>{const lines=(h.text||'').split('\n');const main=esc(lines[0]);const detail=lines.length>1?`<div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5">${lines.slice(1).map(l=>esc(l)).join('<br>')}</div>`:'';return`<div class="h-row"><div class="h-dot ${h.action}"></div><div><div class="h-text">${main}</div>${detail}<div class="h-time">${h.time} — ${t('by')} ${esc(h.username)}</div></div></div>`;}).join('')}</div></div>`+(isManager?`<div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn-add btn-danger" onclick="confirmClearHistory()">${t('clearHistory')}</button></div>`:'');
     return;
   }
 
@@ -1587,10 +1587,11 @@ async function clearHistory() {
 async function addHistory(action, text) {
   const now = new Date();
   const loc = lang === 'tr' ? 'tr-TR' : 'en-US';
-  const time = now.toLocaleDateString(loc) + ' ' +
-    now.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+  const time = now.toLocaleDateString('tr-TR') + ' ' +
+    now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  const ts = now.getTime();
   try {
-    await sb.from('history').insert({ id: uid(), action, text, time, username: userName });
+    await sb.from('history').insert({ id: uid(), action, text, time, ts, username: userName });
   } catch(e) {}
 }
 
@@ -1833,7 +1834,9 @@ async function doExcelSync(wb) {
         </div></details>`;
     }
 
-    await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalAdded} added, ${totalSkipped} skipped`);
+    const allChanges = [...results.products.changes.map(c=>`🗃️ ${c}`), ...results.materials.changes.map(c=>`🌿 ${c}`), ...results.koli.changes.map(c=>`📦 ${c}`), ...results.poset.changes.map(c=>`🛍️ ${c}`)];
+    const changeDetail = allChanges.length ? '\n' + allChanges.join('\n') : '';
+    await addHistory('excel-sync', `Excel sync: ${totalUpdated} updated, ${totalAdded} added, ${totalSkipped} skipped${changeDetail}`);
 
     // Reload data (after history insert so it appears immediately)
     await loadAll();
@@ -1875,6 +1878,11 @@ async function syncProductSheet(wb, sheets, sheetIdx, market, dbProducts, result
     if (match) {
       result.matched++;
       if (match.qty !== ex.qty || match.koli_ici !== ex.koli_ici || match.koli_adet !== ex.koli_adet) {
+        const ch = [];
+        if (match.qty !== ex.qty) ch.push(`qty:${match.qty}→${ex.qty}`);
+        if (match.koli_ici !== ex.koli_ici) ch.push(`koli_ici:${match.koli_ici}→${ex.koli_ici}`);
+        if (match.koli_adet !== ex.koli_adet) ch.push(`koli_adet:${match.koli_adet}→${ex.koli_adet}`);
+        result.changes.push(`${match.name} (${ch.join(', ')})`);
         await sb.from('products').update({ qty: ex.qty, koli_ici: ex.koli_ici, koli_adet: ex.koli_adet }).eq('id', match.id);
         result.updated++;
       } else {
@@ -1910,6 +1918,7 @@ async function syncMaterialSheet(wb, sheets, sheetIdx, dbMaterials, result) {
     if (match) {
       result.matched++;
       if (match.qty !== qty) {
+        result.changes.push(`${match.name} (qty:${match.qty}→${qty})`);
         await sb.from('materials').update({ qty }).eq('id', match.id);
         result.updated++;
       } else {
@@ -1941,6 +1950,7 @@ async function syncKoliSheet(wb, sheets, sheetIdx, dbOther, result) {
     if (match) {
       result.matched++;
       if (match.qty !== qty) {
+        result.changes.push(`${match.name} (qty:${match.qty}→${qty})`);
         await sb.from('othermaterials').update({ qty }).eq('id', match.id);
         result.updated++;
       } else {
@@ -1979,6 +1989,7 @@ async function syncPosetSheet(wb, sheets, sheetIdx, dbOther, result) {
     if (match) {
       result.matched++;
       if (match.qty !== qty) {
+        result.changes.push(`${match.name} (qty:${match.qty}→${qty})`);
         await sb.from('othermaterials').update({ qty }).eq('id', match.id);
         result.updated++;
       } else {
