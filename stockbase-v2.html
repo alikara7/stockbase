@@ -972,7 +972,11 @@ async function loadAll() {
     ]);
     if (p.error || m.error || o.error || h.error) throw new Error();
     products = p.data || []; materials = m.data || [];
-    othermaterials = o.data || []; history = (h.data || []).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    othermaterials = o.data || []; history = (h.data || []).sort((a,b)=>{
+      const ta = a.ts || parseTimeStr(a.time);
+      const tb = b.ts || parseTimeStr(b.time);
+      return tb - ta;
+    });
     setSync('ok', 'live');
     render();
   } catch(e) {
@@ -1766,10 +1770,10 @@ async function doExcelSync(wb) {
     const dbMaterials = mRes.data || [];
     const dbOther = oRes.data || [];
 
-    const results = { products: {updated:0, matched:0, notFound:[], skipped:0, added:0},
-                      materials: {updated:0, matched:0, notFound:[], skipped:0, added:0},
-                      koli: {updated:0, matched:0, notFound:[], skipped:0, added:0},
-                      poset: {updated:0, matched:0, notFound:[], skipped:0, added:0} };
+    const results = { products: {updated:0, matched:0, notFound:[], skipped:0, added:0, changes:[]},
+                      materials: {updated:0, matched:0, notFound:[], skipped:0, added:0, changes:[]},
+                      koli: {updated:0, matched:0, notFound:[], skipped:0, added:0, changes:[]},
+                      poset: {updated:0, matched:0, notFound:[], skipped:0, added:0, changes:[]} };
 
     showExcelOverlay('⏳', t('excelSync'), `<p style="text-align:center">${t('excelUpdating')}</p>`, false);
 
@@ -2007,6 +2011,16 @@ async function syncPosetSheet(wb, sheets, sheetIdx, dbOther, result) {
 // ─── UTILS ───────────────────────────────────────────────
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function parseTimeStr(s) {
+  if (!s) return 0;
+  // Try DD.MM.YYYY HH:MM (tr-TR)
+  let m = s.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{2})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]).getTime();
+  // Try M/D/YYYY (en-US)
+  m = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(+m[3], +m[1]-1, +m[2]).getTime();
+  return 0;
+}
 
 // ─── PWA ─────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
