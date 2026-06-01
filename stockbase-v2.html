@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#1a1d27" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-status-bar-style" content="default" id="apple-status-bar-style">
+<meta name="theme-color" content="#f2f2f7" id="theme-color-meta">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2316a34a'/><stop offset='1' stop-color='%230d7a36'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='62' font-size='46' font-weight='800' font-family='system-ui,sans-serif' fill='white' text-anchor='middle'>Sb</text></svg>">
 <title>StockBase</title>
 <link rel="manifest" href="manifest.json">
@@ -207,7 +206,7 @@ tbody tr:hover td{background:rgba(22,163,74,.03)}
 @keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 /* MOBILE NAV BAR */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--blur-nav);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--border);z-index:200;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--blur-nav);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--border);z-index:350;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08)}
 .mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:4px 2px 2px;cursor:pointer;color:var(--muted);gap:4px;transition:color .18s;-webkit-tap-highlight-color:transparent;border:none;background:none;font-family:'Inter',sans-serif}
 .mnav-item.active{color:var(--green)}
 .mnav-icon-wrap{width:48px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:15px;transition:background .2s,transform .15s}
@@ -326,6 +325,7 @@ html[data-theme="dark"] .logout-dialog{background:#1c1c1e}
 .lp-tab:hover:not(.active){background:var(--surface2);color:var(--text)}
 /* DASH NAV TILES */
 .dash-nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0}
+.dash-nav-grid.centered{grid-template-columns:repeat(auto-fit,minmax(220px,320px));justify-content:center}
 .dash-nav-tile{background:var(--surface);border:.5px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:var(--shadow);-webkit-tap-highlight-color:transparent;user-select:none}
 .dash-nav-tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .dash-nav-tile:active{transform:scale(.96)}
@@ -335,7 +335,7 @@ html[data-theme="dark"] .logout-dialog{background:#1c1c1e}
 .dnt-sub{font-size:12px;color:var(--muted);margin-top:1px}
 .dnt-arrow{font-size:18px;color:var(--muted);flex-shrink:0}
 html[data-theme="dark"] .list-panel{background:#000}
-@media(max-width:700px){.lp-topbar{height:calc(54px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 14px 0}.lp-body{padding:12px 14px 100px}}
+@media(max-width:700px){.lp-topbar{height:calc(54px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 14px 0}.lp-body{padding:12px 14px 100px}.dash-nav-grid.centered{grid-template-columns:minmax(0,320px)}}
 @media all and (display-mode: standalone){
   .topbar{padding-top:env(safe-area-inset-top,48px)}
   .lp-topbar{padding-top:env(safe-area-inset-top,48px)}
@@ -807,8 +807,13 @@ const LIGHT = ':root{--bg:#f2f2f7;--surface:#fff;--surface2:#f2f2f7;--border:rgb
 function setTheme(t) {
   document.getElementById('theme-style').textContent = t === 'dark' ? DARK : LIGHT;
   document.documentElement.setAttribute('data-theme', t);
+  document.documentElement.style.colorScheme = t;
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  const themeMeta = document.getElementById('theme-color-meta');
+  if (themeMeta) themeMeta.setAttribute('content', t === 'dark' ? '#000000' : '#f2f2f7');
+  const appleStatus = document.getElementById('apple-status-bar-style');
+  if (appleStatus) appleStatus.setAttribute('content', t === 'dark' ? 'black-translucent' : 'default');
   localStorage.setItem('sb-theme', t);
 }
 function toggleTheme() {
@@ -1101,6 +1106,12 @@ function switchTab(name) { openListPage(name); }
 function filterTable(type, val) { lpSearchTerm = val.toLowerCase(); renderLPContent(); }
 function filterHistory(val) { lpSearchTerm = val.toLowerCase(); renderLPContent(); }
 
+function syncMobileNav(type) {
+  document.querySelectorAll('.mnav-item[id^="mnav-"]').forEach(item => item.classList.remove('active'));
+  const active = document.getElementById('mnav-' + type);
+  if (active) active.classList.add('active');
+}
+
 // ─── LIST PANEL ───────────────────────────────────────────
 let lpCurrentTab = 'products', lpSearchTerm = '';
 let lpMarket = null, lpCompany = null, lpSection = null, lpCondition = null;
@@ -1163,6 +1174,7 @@ function openListPage(type) {
     addBtn.style.display = noAdd ? 'none' : '';
     addBtn.textContent = type === 'products' ? t('addProduct') : type === 'materials' ? t('addMaterial') : t('addItem');
   }
+  syncMobileNav(type);
   applyRoleUI();
   renderLPContent();
   document.getElementById('list-panel').classList.add('open');
@@ -1188,6 +1200,7 @@ function lpSwitchTab(type, el) {
     addBtn.style.display = noAdd ? 'none' : '';
     addBtn.textContent = type === 'products' ? t('addProduct') : type === 'materials' ? t('addMaterial') : t('addItem');
   }
+  syncMobileNav(type);
   renderLPContent();
 }
 
@@ -1267,7 +1280,7 @@ function renderLPContent() {
       const disCnt = products.filter(p=>p.market==='yurtdisi').length;
       const fabCnt = products.filter(p=>p.market==='fabrika').length;
       const noMkt  = products.filter(p=>!p.market||!['yurtici','yurtdisi','fabrika'].includes(p.market));
-      let html = `<div class="dash-nav-grid">`;
+      let html = `<div class="dash-nav-grid centered">`;
       html += makeDrillTile('🏠','var(--blue-l)',t('yurtici'),`${icCnt} ${t('products_lc')}`,{market:'yurtici'});
       html += makeDrillTile('✈️','var(--teal-l)',t('yurtdisi'),`${disCnt} ${t('products_lc')}`,{market:'yurtdisi'});
       html += makeDrillTile('🏭','var(--purple-l)',t('fabrika'),`${fabCnt} ${t('products_lc')}`,{market:'fabrika'});
@@ -1297,7 +1310,7 @@ function renderLPContent() {
       if (!companies.length && !showNoComp) {
         html += `<div class="empty">${lpSearchTerm ? t('noCompanyFound') : mktLabel+' '+t('noProductsYet')}</div>`; el.innerHTML=html; return;
       }
-      html += `<div class="dash-nav-grid">`;
+      html += `<div class="dash-nav-grid centered">`;
       companies.forEach(c => html += makeDrillTile('🏢','var(--blue-l)',esc(c),`${filtered.filter(p=>p.company===c).length} ${t('products_lc')}`,{market:lpMarket,company:c}));
       if (showNoComp) html += makeDrillTile('❓','var(--surface2)',t('noCompany'),`${noComp.length} ${t('products_lc')}`,{market:lpMarket,company:'__none__'});
       html += '</div>';
@@ -1343,7 +1356,7 @@ function renderLPContent() {
       const koliCnt=othermaterials.filter(i=>i.section==='koli').length;
       const posetCnt=othermaterials.filter(i=>i.section==='poset').length;
       const noSec=othermaterials.filter(i=>!i.section);
-      let html=`<div class="dash-nav-grid">`;
+      let html=`<div class="dash-nav-grid centered">`;
       html+=makeDrillTile('📦','var(--brown-l)',t('koli'),`${koliCnt} ${t('types')}`,{section:'koli'});
       html+=makeDrillTile('🛒','var(--green-l)',t('poset'),`${posetCnt} ${t('types')}`,{section:'poset'});
       html+='</div>';
@@ -1369,7 +1382,7 @@ function renderLPContent() {
       const yeniCnt=filtered.filter(i=>i.condition==='yeni').length;
       const eskiCnt=filtered.filter(i=>i.condition==='eski').length;
       let html=`<div style="margin-bottom:14px"><button class="lp-back" style="font-size:13px" onclick="lpDrillByIdx(${backIdx})">‹ ${t('sections')}</button></div>`;
-      html+=`<div class="dash-nav-grid">`;
+      html+=`<div class="dash-nav-grid centered">`;
       html+=makeDrillTile('🆕','var(--green-l)',t('yeni'),`${yeniCnt} ${t('types')}`,{section:'koli',condition:'yeni'});
       html+=makeDrillTile('🔄','var(--surface2)',t('eski'),`${eskiCnt} ${t('types')}`,{section:'koli',condition:'eski'});
       html+='</div>';
@@ -1684,6 +1697,7 @@ function openListPageDirect() {
     addBtn.style.display = noAdd ? 'none' : '';
     addBtn.textContent = lpCurrentTab === 'products' ? t('addProduct') : lpCurrentTab === 'materials' ? t('addMaterial') : t('addItem');
   }
+  syncMobileNav(lpCurrentTab);
   document.getElementById('list-panel').classList.add('open');
   renderLPContent();
 }
