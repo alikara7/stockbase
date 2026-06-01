@@ -828,8 +828,20 @@ function setTheme(t) {
   if (appleStatus) appleStatus.setAttribute('content', t === 'dark' ? 'black-translucent' : 'default');
   localStorage.setItem('sb-theme', t);
 }
+
+function shouldReloadThemeChrome() {
+  const isMobileViewport = window.matchMedia('(max-width: 700px)').matches;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
+  const isAppleMobile = /iPhone|iPad|iPod/i.test(window.navigator.userAgent) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  return isMobileViewport && (isStandalone || isAppleMobile);
+}
+
 function toggleTheme() {
-  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  setTheme(nextTheme);
+  if (shouldReloadThemeChrome()) {
+    window.location.reload();
+  }
 }
 (function() {
   const stored = localStorage.getItem('sb-theme');
